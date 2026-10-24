@@ -1,0 +1,25 @@
+# Gradle
+.gradle/
+build/
+*/build/
+.kotlin/
+
+# Local configuration
+local.properties
+*.iml
+
+# Android Studio
+.idea/
+
+# macOS
+.DS_Store
+
+# Kotlin Native
+*.klib
+
+# Xcode derived data
+.xcode-derived*/
+
+# Xcode user-specific files
+**/xcuserdata/
+**/*.xcuserstate
