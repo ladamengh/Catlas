@@ -15,7 +15,7 @@ import androidx.navigation.navArgument
 import androidx.savedstate.read
 import com.ladamengh.petproject.data.cats.RoomCatRepository
 import com.ladamengh.petproject.data.local.CatlasDatabase
-import com.ladamengh.petproject.data.user.RoomUserDataStore
+import com.ladamengh.petproject.data.user.RoomProfileRepository
 import com.ladamengh.petproject.domain.repository.CatRepository
 import com.ladamengh.petproject.feature.favorites.FavoritesRoute
 import com.ladamengh.petproject.feature.home.CatDetailsRoute
@@ -35,7 +35,7 @@ fun CatlasApp(
     val repository = remember(catRepository, database) {
         catRepository ?: RoomCatRepository(database)
     }
-    val userDataStore = remember(database) { RoomUserDataStore(database) }
+    val profileRepository = remember(database) { RoomProfileRepository(database) }
     val navController = rememberNavController()
 
     MaterialTheme {
@@ -77,7 +77,7 @@ fun CatlasApp(
                                     },
                                 )
 
-                                AppTab.Profile -> ProfileRoute(userDataStore)
+                                AppTab.Profile -> ProfileRoute(profileRepository)
 
                                 else -> PlaceholderScreen(
                                     title = tab.title,

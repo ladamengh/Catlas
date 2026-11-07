@@ -3,6 +3,8 @@ package com.ladamengh.petproject.data.user
 import com.ladamengh.petproject.data.local.CatlasDatabase
 import com.ladamengh.petproject.data.local.LocalProfileEntity
 import com.ladamengh.petproject.data.local.SubmittedCatEntity
+import com.ladamengh.petproject.domain.model.UserProfile
+import com.ladamengh.petproject.domain.repository.ProfileRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -12,11 +14,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.random.Random
-
-data class LocalProfile(
-    val id: String,
-    val displayName: String,
-)
 
 /** TheCatAPI image reference saved after the user submits a cat. */
 data class SubmittedCatRecord(
@@ -28,21 +25,40 @@ data class SubmittedCatRecord(
 )
 
 /** Local profile and submitted-cat history persisted in the shared Room database. */
-class RoomUserDataStore(
+class RoomProfileRepository(
     database: CatlasDatabase,
-) {
+) : ProfileRepository {
     private val dao = database.dao()
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
-    val profile: StateFlow<LocalProfile> = dao.observeProfile()
+    override val profile: StateFlow<UserProfile> = dao.observeProfile()
         .map { entity ->
-            entity?.let { LocalProfile(it.localId, it.displayName) }
-                ?: LocalProfile(id = "", displayName = DEFAULT_DISPLAY_NAME)
+            entity?.let {
+                UserProfile(
+                    id = it.localId,
+                    displayName = it.displayName,
+                    description = it.description,
+                    city = it.city,
+                    avatarImage = it.avatarImage,
+                )
+            } ?: UserProfile(
+                id = "",
+                displayName = DEFAULT_DISPLAY_NAME,
+                description = null,
+                city = null,
+                avatarImage = null,
+            )
         }
         .stateIn(
             scope,
             SharingStarted.Eagerly,
-            LocalProfile(id = "", displayName = DEFAULT_DISPLAY_NAME),
+            UserProfile(
+                id = "",
+                displayName = DEFAULT_DISPLAY_NAME,
+                description = null,
+                city = null,
+                avatarImage = null,
+            ),
         )
 
     val submittedCats: StateFlow<List<SubmittedCatRecord>> = dao.observeSubmittedCats()
@@ -55,7 +71,12 @@ class RoomUserDataStore(
         }
     }
 
-    fun saveDisplayName(displayName: String) {
+    override fun saveProfile(
+        displayName: String,
+        description: String?,
+        city: String?,
+        avatarImage: ByteArray?,
+    ) {
         val trimmedName = displayName.trim()
         if (trimmedName.isBlank()) return
         scope.launch {
@@ -65,6 +86,9 @@ class RoomUserDataStore(
                 LocalProfileEntity(
                     localId = oldProfile.localId,
                     displayName = trimmedName,
+                    description = description?.trim()?.takeIf(String::isNotEmpty),
+                    city = city?.trim()?.takeIf(String::isNotEmpty),
+                    avatarImage = avatarImage,
                 ),
             )
         }

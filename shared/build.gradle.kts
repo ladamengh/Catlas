@@ -48,6 +48,8 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
+            implementation(libs.coil.compose)
+            implementation(libs.imagepickerkmp.photo)
         }
     }
 }

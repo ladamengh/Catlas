@@ -1,6 +1,7 @@
 package com.ladamengh.petproject.data.local
 
 import androidx.room.ConstructedBy
+import androidx.room.AutoMigration
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Insert
@@ -40,6 +41,9 @@ data class LocalProfileEntity(
     @PrimaryKey val key: Int = PROFILE_KEY,
     val localId: String,
     val displayName: String,
+    val description: String? = null,
+    val city: String? = null,
+    val avatarImage: ByteArray? = null,
 ) {
     companion object {
         const val PROFILE_KEY = 1
@@ -101,7 +105,11 @@ interface CatlasDao {
         SubmittedCatEntity::class,
         LocalProfileEntity::class,
     ],
-    version = 1,
+    version = 3,
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 2, to = 3),
+    ],
     exportSchema = true,
 )
 @ConstructedBy(CatlasDatabaseConstructor::class)
