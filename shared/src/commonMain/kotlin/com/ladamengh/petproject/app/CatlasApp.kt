@@ -17,6 +17,8 @@ import com.ladamengh.petproject.data.cats.RoomCatRepository
 import com.ladamengh.petproject.data.local.CatlasDatabase
 import com.ladamengh.petproject.data.user.RoomProfileRepository
 import com.ladamengh.petproject.domain.repository.CatRepository
+import com.ladamengh.petproject.feature.catalog.BreedDetailsRoute
+import com.ladamengh.petproject.feature.catalog.CatalogRoute
 import com.ladamengh.petproject.feature.favorites.FavoritesRoute
 import com.ladamengh.petproject.feature.home.CatDetailsRoute
 import com.ladamengh.petproject.feature.home.HomeFeedRoute
@@ -70,10 +72,20 @@ fun CatlasApp(
                                     },
                                 )
 
+                                AppTab.Catalog -> CatalogRoute(
+                                    catRepository = repository,
+                                    onNavigateToBreed = { breedId ->
+                                        navController.navigate(AppRoutes.breedDetails(breedId))
+                                    },
+                                )
+
                                 AppTab.Favorites -> FavoritesRoute(
                                     catRepository = repository,
                                     onNavigateToCat = { catId ->
                                         navController.navigate(AppRoutes.catDetails(catId))
+                                    },
+                                    onNavigateToBreed = { breedId ->
+                                        navController.navigate(AppRoutes.breedDetails(breedId))
                                     },
                                 )
 
@@ -96,6 +108,20 @@ fun CatlasApp(
                     if (catId != null) {
                         CatDetailsRoute(
                             catId = catId,
+                            catRepository = repository,
+                            onBack = { navController.popBackStack() },
+                        )
+                    }
+                }
+
+                composable(
+                    route = AppRoutes.BreedDetails,
+                    arguments = listOf(navArgument("breedId") { type = NavType.StringType }),
+                ) { backStackEntry ->
+                    val breedId = backStackEntry.arguments?.read { getStringOrNull("breedId") }
+                    if (breedId != null) {
+                        BreedDetailsRoute(
+                            breedId = breedId,
                             catRepository = repository,
                             onBack = { navController.popBackStack() },
                         )

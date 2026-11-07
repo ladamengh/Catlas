@@ -27,12 +27,14 @@ class FavoritesViewModel(
                 catRepository.cats,
                 catRepository.favoriteCatIds,
                 catRepository.favoriteBreeds,
+                catRepository.breeds,
                 selectedSection,
-            ) { cats, favoriteCatIds, favoriteBreeds, section ->
+            ) { cats, favoriteCatIds, favoriteBreeds, breeds, section ->
                 FavoritesState(
                     cats = cats,
                     favoriteCatIds = favoriteCatIds,
                     favoriteBreeds = favoriteBreeds,
+                    breeds = breeds,
                     selectedSection = section,
                     isLoading = false,
                 )
@@ -48,6 +50,9 @@ class FavoritesViewModel(
             is FavoritesIntent.OpenCat -> effectChannel.trySend(
                 FavoritesEffect.NavigateToCat(intent.catId),
             )
+            is FavoritesIntent.OpenBreed -> _uiState.value.breeds
+                .firstOrNull { it.name == intent.breedName }
+                ?.let { breed -> effectChannel.trySend(FavoritesEffect.NavigateToBreed(breed.id)) }
         }
     }
 }

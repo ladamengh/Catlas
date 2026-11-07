@@ -87,6 +87,7 @@ fun FavoritesScreen(
                 FavoritesSection.Breeds -> FavoriteBreedsList(
                     favoriteBreeds = state.favoriteBreeds,
                     onFavoriteClick = { onIntent(FavoritesIntent.ToggleFavoriteBreed(it)) },
+                    onBreedClick = { onIntent(FavoritesIntent.OpenBreed(it)) },
                     modifier = Modifier.weight(1f),
                 )
             }
@@ -181,6 +182,7 @@ private fun FavoriteCatsList(
 private fun FavoriteBreedsList(
     favoriteBreeds: Set<String>,
     onFavoriteClick: (String) -> Unit,
+    onBreedClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (favoriteBreeds.isEmpty()) {
@@ -206,15 +208,18 @@ private fun FavoriteBreedsList(
             FavoriteBreedCard(
                 breed = breed,
                 onRemove = { onFavoriteClick(breed) },
+                onClick = { onBreedClick(breed) },
             )
         }
     }
 }
 
 @Composable
-private fun FavoriteBreedCard(breed: String, onRemove: () -> Unit) {
+private fun FavoriteBreedCard(breed: String, onRemove: () -> Unit, onClick: () -> Unit) {
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         shape = RoundedCornerShape(20.dp),
         color = CatlasColors.cardSurface,
         shadowElevation = 2.dp,

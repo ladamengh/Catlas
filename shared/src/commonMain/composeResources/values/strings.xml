@@ -5,6 +5,14 @@
     <string name="tab_camera">Камера</string>
     <string name="tab_favorites">Избранное</string>
     <string name="tab_profile">Профиль</string>
+    <string name="home_title">Знакомься с котиками</string>
+    <string name="home_subtitle">У каждого свой характер и своя история</string>
+    <string name="catalog_title">Каталог пород</string>
+    <string name="catalog_subtitle">Сохраняй понравившиеся породы, чтобы вернуться к ним позже</string>
+    <string name="breed_image_description">Иллюстрация породы %1$s</string>
+    <string name="breed_origin">Происхождение</string>
+    <string name="breed_temperament">Характер</string>
+    <string name="breed_about">О породе</string>
     <string name="section_not_ready">Раздел пока готовится</string>
     <string name="cat_image_description">Котик %1$s</string>
     <string name="favorite_remove">Убрать из избранного</string>

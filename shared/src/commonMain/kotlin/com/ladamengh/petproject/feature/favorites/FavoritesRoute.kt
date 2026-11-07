@@ -12,16 +12,18 @@ import kotlinx.coroutines.flow.collect
 fun FavoritesRoute(
     catRepository: CatRepository,
     onNavigateToCat: (Int) -> Unit,
+    onNavigateToBreed: (String) -> Unit,
 ) {
     val viewModel: FavoritesViewModel = viewModel(key = "favorites") {
         FavoritesViewModel(catRepository)
     }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(viewModel, onNavigateToCat) {
+    LaunchedEffect(viewModel, onNavigateToCat, onNavigateToBreed) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 is FavoritesEffect.NavigateToCat -> onNavigateToCat(effect.catId)
+                is FavoritesEffect.NavigateToBreed -> onNavigateToBreed(effect.breedId)
             }
         }
     }

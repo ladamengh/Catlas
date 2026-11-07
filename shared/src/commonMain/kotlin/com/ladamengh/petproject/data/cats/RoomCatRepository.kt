@@ -22,6 +22,7 @@ class RoomCatRepository(
     private val mockRepository = MockCatRepository()
 
     override val cats = mockRepository.cats
+    override val breeds = mockRepository.breeds
 
     override val favoriteCatIds: StateFlow<Set<Int>> = dao.observeFavoriteCats()
         .map { savedCats -> savedCats.map(FavoriteCatEntity::catId).toSet() }

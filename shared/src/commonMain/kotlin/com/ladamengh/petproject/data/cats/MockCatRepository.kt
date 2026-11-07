@@ -30,9 +30,47 @@ class MockCatRepository : CatRepository {
                 location = "Казань",
                 description = "Дружелюбный пушистик и большой ценитель внимания и вкусных угощений.",
             ),
+            Cat(
+                id = 4,
+                name = "Луна",
+                breed = "Бенгальская кошка",
+                location = "Москва",
+                description = "Подвижная и умная кошка, которая любит игры и новые впечатления.",
+            ),
+            Cat(
+                id = 5,
+                name = "Сёма",
+                breed = "Мейн-кун",
+                location = "Екатеринбург",
+                description = "Большой добряк с мягким характером и очень выразительным взглядом.",
+            ),
+            Cat(
+                id = 6,
+                name = "Тося",
+                breed = "Шотландская вислоухая",
+                location = "Нижний Новгород",
+                description = "Нежная и тихая кошка, которая обожает дремать рядом с человеком.",
+            ),
+            Cat(
+                id = 7,
+                name = "Граф",
+                breed = "Русская голубая",
+                location = "Самара",
+                description = "Независимый красавец, но своим близким он дарит много тепла.",
+            ),
+            Cat(
+                id = 8,
+                name = "Карамелька",
+                breed = "Сфинкс",
+                location = "Новосибирск",
+                description = "Общительная и ласковая кошка, которая любит уютные объятия.",
+            ),
         ),
     )
     override val cats = _cats.asStateFlow()
+
+    private val _breeds = MutableStateFlow(MockCatBreeds.all)
+    override val breeds = _breeds.asStateFlow()
 
     private val _favoriteCatIds = MutableStateFlow<Set<Int>>(emptySet())
     override val favoriteCatIds = _favoriteCatIds.asStateFlow()

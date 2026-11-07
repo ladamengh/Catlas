@@ -21,6 +21,8 @@ enum class AppTab(
 
 object AppRoutes {
     const val CatDetails = "cat/{catId}"
+    const val BreedDetails = "breed/{breedId}"
 
     fun catDetails(catId: Int): String = "cat/$catId"
+    fun breedDetails(breedId: String): String = "breed/$breedId"
 }
