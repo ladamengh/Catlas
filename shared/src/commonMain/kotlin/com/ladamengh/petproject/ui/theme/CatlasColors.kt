@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 object CatlasColors {
     val screenBackground = Color(0xFFFFFAF6)
+    val segmentTrack = Color(0xFFF0E9E3)
     val cardSurface = Color.White
     val artworkOverlay = Color(0xBFFFFFFF)
     val artworkInk = Color(0xFF4E403A)

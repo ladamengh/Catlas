@@ -13,18 +13,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ladamengh.petproject.app.CatlasIntent
 import com.ladamengh.petproject.domain.model.Cat
 
 @Composable
 fun HomeFeedScreen(
-    cats: List<Cat>,
-    favoriteCatIds: Set<Int>,
-    isLoading: Boolean,
-    onIntent: (CatlasIntent) -> Unit,
+    state: HomeFeedState,
+    onIntent: (HomeFeedIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (isLoading) {
+    if (state.isLoading) {
         Box(
             modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
@@ -44,12 +41,12 @@ fun HomeFeedScreen(
         ),
         verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
-        items(cats, key = Cat::id) { cat ->
+        items(state.cats, key = Cat::id) { cat ->
             CatPostCard(
                 cat = cat,
-                isFavorite = cat.id in favoriteCatIds,
-                onFavoriteClick = { onIntent(CatlasIntent.ToggleFavorite(cat.id)) },
-                onClick = { onIntent(CatlasIntent.OpenCat(cat.id)) },
+                isFavorite = cat.id in state.favoriteCatIds,
+                onFavoriteClick = { onIntent(HomeFeedIntent.ToggleFavorite(cat.id)) },
+                onClick = { onIntent(HomeFeedIntent.OpenCat(cat.id)) },
                 modifier = Modifier.padding(bottom = 2.dp),
             )
         }

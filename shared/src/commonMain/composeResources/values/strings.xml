@@ -11,4 +11,14 @@
     <string name="favorite_add">В избранное</string>
     <string name="back_to_feed">Назад к ленте</string>
     <string name="cat_about">О котике</string>
+    <string name="favorites_title">Избранное</string>
+    <string name="favorites_cats">Кошки</string>
+    <string name="favorites_breeds">Породы</string>
+    <string name="favorites_empty_cats_title">Пока нет избранных котиков</string>
+    <string name="favorites_empty_cats_message">Добавляйте котиков в избранное из ленты.</string>
+    <string name="favorites_empty_breeds_title">Пока нет избранных пород</string>
+    <string name="favorites_empty_breeds_message">Сохраняйте породы с экрана котика.</string>
+    <string name="favorite_breed_label">Избранная порода</string>
+    <string name="favorite_breed_add">Добавить породу в избранное</string>
+    <string name="favorite_breed_remove">Убрать породу из избранного</string>
 </resources>

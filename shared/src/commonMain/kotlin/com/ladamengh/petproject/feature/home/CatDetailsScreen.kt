@@ -3,6 +3,7 @@ package com.ladamengh.petproject.feature.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
@@ -33,6 +34,8 @@ import catlas.shared.generated.resources.back_to_feed
 import catlas.shared.generated.resources.cat_about
 import catlas.shared.generated.resources.cat_image_description
 import catlas.shared.generated.resources.favorite_add
+import catlas.shared.generated.resources.favorite_breed_add
+import catlas.shared.generated.resources.favorite_breed_remove
 import catlas.shared.generated.resources.favorite_remove
 import catlas.shared.generated.resources.ic_cat
 import com.ladamengh.petproject.domain.model.Cat
@@ -45,8 +48,10 @@ import org.jetbrains.compose.resources.stringResource
 fun CatDetailsScreen(
     cat: Cat,
     isFavorite: Boolean,
+    isBreedFavorite: Boolean,
     onBack: () -> Unit,
     onFavoriteClick: () -> Unit,
+    onBreedFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -76,7 +81,7 @@ fun CatDetailsScreen(
                         .background(CatlasColors.cardSurface),
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(Res.string.back_to_feed),
                         tint = CatlasColors.textPrimary,
                     )
@@ -113,11 +118,38 @@ fun CatDetailsScreen(
                     color = CatlasColors.textPrimary,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = cat.breed,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = CatlasColors.textTertiary,
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = cat.breed,
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = CatlasColors.textTertiary,
+                    )
+                    IconButton(onClick = onBreedFavoriteClick) {
+                        Icon(
+                            imageVector = if (isBreedFavorite) {
+                                Icons.Filled.Favorite
+                            } else {
+                                Icons.Filled.FavoriteBorder
+                            },
+                            contentDescription = stringResource(
+                                if (isBreedFavorite) {
+                                    Res.string.favorite_breed_remove
+                                } else {
+                                    Res.string.favorite_breed_add
+                                },
+                            ),
+                            tint = if (isBreedFavorite) {
+                                CatlasColors.favorite
+                            } else {
+                                CatlasColors.favoriteInactive
+                            },
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = cat.location,
