@@ -13,8 +13,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.savedstate.read
-import com.ladamengh.petproject.data.cats.MockCatRepository
+import com.ladamengh.petproject.data.local.CatlasDatabase
 import com.ladamengh.petproject.domain.repository.CatRepository
+import com.ladamengh.petproject.data.cats.MockCatRepository
 import com.ladamengh.petproject.feature.favorites.FavoritesRoute
 import com.ladamengh.petproject.feature.home.CatDetailsRoute
 import com.ladamengh.petproject.feature.home.HomeFeedRoute
@@ -26,9 +27,12 @@ import com.ladamengh.petproject.ui.theme.CatlasColors
 
 @Composable
 fun CatlasApp(
+    database: CatlasDatabase,
     catRepository: CatRepository? = null,
 ) {
-    val repository = remember(catRepository) { catRepository ?: MockCatRepository() }
+    val repository = remember(catRepository, database) {
+        catRepository ?: MockCatRepository()
+    }
     val navController = rememberNavController()
 
     MaterialTheme {
