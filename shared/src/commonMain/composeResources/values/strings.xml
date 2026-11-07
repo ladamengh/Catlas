@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="tab_home">Домой</string>
+    <string name="tab_catalog">Каталог</string>
+    <string name="tab_camera">Камера</string>
+    <string name="tab_favorites">Избранное</string>
+    <string name="tab_profile">Профиль</string>
+    <string name="section_not_ready">Раздел пока готовится</string>
+    <string name="cat_image_description">Котик %1$s</string>
+    <string name="favorite_remove">Убрать из избранного</string>
+    <string name="favorite_add">В избранное</string>
+    <string name="back_to_feed">Назад к ленте</string>
+    <string name="cat_about">О котике</string>
+</resources>

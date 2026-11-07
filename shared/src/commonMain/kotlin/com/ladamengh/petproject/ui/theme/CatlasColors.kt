@@ -1,0 +1,19 @@
+package com.ladamengh.petproject.ui.theme
+
+import androidx.compose.ui.graphics.Color
+
+object CatlasColors {
+    val screenBackground = Color(0xFFFFFAF6)
+    val cardSurface = Color.White
+    val artworkOverlay = Color(0xBFFFFFFF)
+    val artworkInk = Color(0xFF4E403A)
+    val textPrimary = Color(0xFF342A26)
+    val textSecondary = Color(0xFF80736D)
+    val textTertiary = Color(0xFF6F625C)
+    val textBody = Color(0xFF51443F)
+    val favorite = Color(0xFFD64B55)
+    val favoriteInactive = Color(0xFF51443F)
+    val artworkPeach = Color(0xFFF5D9C8)
+    val artworkSage = Color(0xFFDCE7D6)
+    val artworkLilac = Color(0xFFE5DDF0)
+}

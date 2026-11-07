@@ -4,9 +4,12 @@ android-compileSdk = "36"
 android-minSdk = "24"
 android-targetSdk = "36"
 androidxActivityCompose = "1.13.0"
+androidxLifecycle = "2.10.0"
+androidxNavigation = "2.9.2"
 composeMultiplatform = "1.11.0"
 composeMaterial3 = "1.11.0-alpha07"
 composeMaterialIcons = "1.7.3"
+kotlinxCoroutines = "1.10.2"
 kotlin = "2.3.21"
 
 [libraries]
@@ -18,6 +21,10 @@ compose-material3 = { module = "org.jetbrains.compose.material3:material3", vers
 compose-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "composeMaterialIcons" }
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityCompose" }
+androidx-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
+androidx-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
+androidx-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "androidxNavigation" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
