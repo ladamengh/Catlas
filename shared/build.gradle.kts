@@ -50,6 +50,9 @@ kotlin {
             implementation(libs.sqlite.bundled)
             implementation(libs.coil.compose)
             implementation(libs.imagepickerkmp.photo)
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
         }
     }
 }

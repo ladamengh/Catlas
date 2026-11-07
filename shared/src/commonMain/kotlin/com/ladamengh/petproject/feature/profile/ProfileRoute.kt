@@ -4,8 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ladamengh.petproject.domain.repository.ProfileRepository
+import org.koin.compose.viewmodel.koinViewModel
 import io.github.ismoy.imagepickerkmp.config.CropConfig
 import io.github.ismoy.imagepickerkmp.config.GalleryConfig
 import io.github.ismoy.imagepickerkmp.extensions.loadBytes
@@ -16,10 +15,8 @@ import io.github.ismoy.imagepickerkmp.picker.rememberImagePickerKMP
 import kotlinx.coroutines.flow.collect
 
 @Composable
-fun ProfileRoute(profileRepository: ProfileRepository) {
-    val viewModel: ProfileViewModel = viewModel(key = "profile") {
-        ProfileViewModel(profileRepository)
-    }
+fun ProfileRoute() {
+    val viewModel: ProfileViewModel = koinViewModel(key = "profile")
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val picker = rememberImagePickerKMP(
         config = ImagePickerKMPConfig(

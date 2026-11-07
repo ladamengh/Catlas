@@ -4,18 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ladamengh.petproject.domain.repository.CatRepository
+import org.koin.compose.viewmodel.koinViewModel
 import kotlinx.coroutines.flow.collect
 
 @Composable
 fun HomeFeedRoute(
-    catRepository: CatRepository,
     onNavigateToCat: (Int) -> Unit,
 ) {
-    val viewModel: HomeFeedViewModel = viewModel(key = "home-feed") {
-        HomeFeedViewModel(catRepository)
-    }
+    val viewModel: HomeFeedViewModel = koinViewModel(key = "home-feed")
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel, onNavigateToCat) {

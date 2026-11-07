@@ -6,17 +6,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ladamengh.petproject.domain.repository.CatRepository
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun CatDetailsRoute(
     catId: Int,
-    catRepository: CatRepository,
     onBack: () -> Unit,
 ) {
-    val viewModel: CatDetailsViewModel = viewModel(key = "cat-details-$catId") {
-        CatDetailsViewModel(catId, catRepository)
+    val viewModel: CatDetailsViewModel = koinViewModel(key = "cat-details-$catId") {
+        parametersOf(catId)
     }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val cat = uiState.cat ?: return
