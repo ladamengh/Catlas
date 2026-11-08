@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-/** TheCatAPI image reference saved after the user submits a cat. */
+/** External cat image reference saved after the user submits a cat. */
 data class SubmittedCatRecord(
     val imageId: String,
     val imageUrl: String,

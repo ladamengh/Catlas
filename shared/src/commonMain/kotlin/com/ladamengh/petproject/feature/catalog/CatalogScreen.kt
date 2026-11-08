@@ -22,6 +22,8 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -32,7 +34,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
 import catlas.shared.generated.resources.Res
+import catlas.shared.generated.resources.breed_image_description
 import catlas.shared.generated.resources.favorite_breed_add
 import catlas.shared.generated.resources.favorite_breed_remove
 import catlas.shared.generated.resources.ic_cat
@@ -68,6 +73,28 @@ fun CatalogScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     color = CatlasColors.textSecondary,
                 )
+            }
+        }
+
+        if (state.isLoading && state.breeds.isEmpty()) {
+            item {
+                Box(
+                    modifier = Modifier.fillMaxWidth().height(180.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator(color = CatlasColors.favorite)
+                }
+            }
+        }
+
+        if (state.hasError) {
+            item {
+                Button(
+                    onClick = { onIntent(CatalogIntent.Retry) },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text("Не удалось загрузить каталог. Повторить")
+                }
             }
         }
 
@@ -114,17 +141,26 @@ private fun BreedCard(
                     .background(breed.id.placeholderColor()),
                 contentAlignment = Alignment.Center,
             ) {
-                Surface(
-                    modifier = Modifier.size(92.dp),
-                    shape = CircleShape,
-                    color = CatlasColors.artworkOverlay,
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.ic_cat),
-                        contentDescription = null,
-                        modifier = Modifier.padding(18.dp),
-                        tint = CatlasColors.artworkInk,
+                if (!breed.imageUrl.isNullOrBlank()) {
+                    AsyncImage(
+                        model = breed.imageUrl,
+                        contentDescription = stringResource(Res.string.breed_image_description, breed.name),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
                     )
+                } else {
+                    Surface(
+                        modifier = Modifier.size(92.dp),
+                        shape = CircleShape,
+                        color = CatlasColors.artworkOverlay,
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.ic_cat),
+                            contentDescription = null,
+                            modifier = Modifier.padding(18.dp),
+                            tint = CatlasColors.artworkInk,
+                        )
+                    }
                 }
                 IconButton(
                     onClick = onFavoriteClick,

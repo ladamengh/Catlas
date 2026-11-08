@@ -1,6 +1,10 @@
 package com.ladamengh.petproject.di
 
 import com.ladamengh.petproject.data.cats.RoomCatRepository
+import com.ladamengh.petproject.data.cats.SupabaseCatDataSource
+import com.ladamengh.petproject.data.cats.remote.SupabaseBreedsService
+import com.ladamengh.petproject.data.cats.remote.createSupabaseHttpClient
+import com.ladamengh.petproject.data.cats.remote.SupabaseConfig
 import com.ladamengh.petproject.data.local.CatlasDatabase
 import com.ladamengh.petproject.data.user.RoomProfileRepository
 import com.ladamengh.petproject.domain.repository.CatRepository
@@ -16,7 +20,10 @@ import org.koin.dsl.module
 
 fun appModule(database: CatlasDatabase) = module {
     single { database }
-    single<CatRepository> { RoomCatRepository(get()) }
+    single { createSupabaseHttpClient() }
+    single { SupabaseBreedsService(get(), SupabaseConfig.projectUrl, SupabaseConfig.publishableKey) }
+    single { SupabaseCatDataSource(get()) }
+    single<CatRepository> { RoomCatRepository(get(), get()) }
     single<ProfileRepository> { RoomProfileRepository(get()) }
 
     viewModel { HomeFeedViewModel(get()) }

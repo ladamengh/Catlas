@@ -64,6 +64,7 @@ fun BreedDetailsScreen(
                 ),
                 onBack = onBack,
                 onFavoriteClick = onFavoriteClick,
+                imageUrl = breed.imageUrl,
             )
 
             Column(

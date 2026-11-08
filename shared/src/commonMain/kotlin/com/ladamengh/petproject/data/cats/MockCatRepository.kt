@@ -78,6 +78,8 @@ class MockCatRepository : CatRepository {
     private val _favoriteBreeds = MutableStateFlow<Set<String>>(emptySet())
     override val favoriteBreeds = _favoriteBreeds.asStateFlow()
 
+    override suspend fun refreshBreeds() = Unit
+
     override fun toggleFavoriteCat(catId: Int) {
         _favoriteCatIds.update { ids ->
             if (catId in ids) ids - catId else ids + catId

@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
 import catlas.shared.generated.resources.Res
 import catlas.shared.generated.resources.back_to_feed
 import catlas.shared.generated.resources.favorite_add
@@ -37,6 +39,7 @@ fun DetailsHeader(
     favoriteDescription: String,
     onBack: () -> Unit,
     onFavoriteClick: () -> Unit,
+    imageUrl: String? = null,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -46,12 +49,21 @@ fun DetailsHeader(
             .background(backgroundColor),
         contentAlignment = Alignment.Center,
     ) {
-        Icon(
-            painter = painterResource(Res.drawable.ic_cat),
-            contentDescription = imageDescription,
-            modifier = Modifier.size(184.dp),
-            tint = CatlasColors.artworkInk,
-        )
+        if (!imageUrl.isNullOrBlank()) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = imageDescription,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxWidth().height(320.dp),
+            )
+        } else {
+            Icon(
+                painter = painterResource(Res.drawable.ic_cat),
+                contentDescription = imageDescription,
+                modifier = Modifier.size(184.dp),
+                tint = CatlasColors.artworkInk,
+            )
+        }
         IconButton(
             onClick = onBack,
             modifier = Modifier

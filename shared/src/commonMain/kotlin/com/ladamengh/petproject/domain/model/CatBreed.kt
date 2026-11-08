@@ -6,4 +6,5 @@ data class CatBreed(
     val origin: String,
     val temperament: String,
     val description: String,
+    val imageUrl: String? = null,
 )
