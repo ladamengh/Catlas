@@ -52,7 +52,7 @@ fun BreedDetailsScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             DetailsHeader(
-                backgroundColor = breed.id.placeholderColor(),
+                backgroundColor = breed.id.artworkBackgroundColor(),
                 imageDescription = stringResource(Res.string.breed_image_description, breed.name),
                 isFavorite = state.isFavorite,
                 favoriteDescription = stringResource(
@@ -121,7 +121,7 @@ private fun BreedDetailSection(
     )
 }
 
-private fun String.placeholderColor() = when (hashCode().mod(3)) {
+private fun String.artworkBackgroundColor() = when (hashCode().mod(3)) {
     0 -> CatlasColors.artworkPeach
     1 -> CatlasColors.artworkSage
     else -> CatlasColors.artworkLilac

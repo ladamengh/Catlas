@@ -16,13 +16,13 @@ import com.ladamengh.petproject.data.local.CatlasDatabase
 import com.ladamengh.petproject.di.appModule
 import com.ladamengh.petproject.feature.catalog.BreedDetailsRoute
 import com.ladamengh.petproject.feature.catalog.CatalogRoute
+import com.ladamengh.petproject.feature.camera.CameraRoute
 import com.ladamengh.petproject.feature.favorites.FavoritesRoute
 import com.ladamengh.petproject.feature.home.CatDetailsRoute
 import com.ladamengh.petproject.feature.home.HomeFeedRoute
 import com.ladamengh.petproject.feature.navigation.AppRoutes
 import com.ladamengh.petproject.feature.navigation.AppTab
 import com.ladamengh.petproject.feature.navigation.MainLayout
-import com.ladamengh.petproject.feature.placeholder.PlaceholderScreen
 import com.ladamengh.petproject.feature.profile.ProfileRoute
 import com.ladamengh.petproject.ui.theme.CatlasColors
 import org.koin.compose.KoinApplication
@@ -81,12 +81,20 @@ fun CatlasApp(
                                         },
                                     )
 
+                                    AppTab.Camera -> CameraRoute(
+                                        onPublished = {
+                                            navController.navigate(AppTab.Home.route) {
+                                                popUpTo(navController.graph.findStartDestination().id) {
+                                                    saveState = true
+                                                }
+                                                launchSingleTop = true
+                                                restoreState = true
+                                            }
+                                        },
+                                    )
+
                                     AppTab.Profile -> ProfileRoute()
 
-                                    else -> PlaceholderScreen(
-                                        title = tab.title,
-                                        modifier = Modifier.fillMaxSize(),
-                                    )
                                 }
                             }
                         }

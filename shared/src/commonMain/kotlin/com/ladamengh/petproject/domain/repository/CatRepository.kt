@@ -11,6 +11,14 @@ interface CatRepository {
     val favoriteBreeds: StateFlow<Set<String>>
 
     suspend fun refreshBreeds()
+    suspend fun refreshCats()
+    suspend fun publishCat(
+        name: String,
+        breed: String,
+        location: String,
+        description: String,
+        image: ByteArray,
+    )
 
     fun toggleFavoriteCat(catId: Int)
     fun toggleFavoriteBreed(breed: String)

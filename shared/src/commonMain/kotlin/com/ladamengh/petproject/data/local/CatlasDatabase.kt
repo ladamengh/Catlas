@@ -20,6 +20,7 @@ data class FavoriteCatEntity(
     val breed: String,
     val location: String,
     val description: String,
+    val imageUrl: String? = null,
 )
 
 @Entity(tableName = "favorite_breeds")
@@ -96,7 +97,26 @@ interface CatlasDao {
 
     @Query("DELETE FROM submitted_cats WHERE imageId = :imageId")
     suspend fun removeSubmittedCat(imageId: String)
+
+    @Query("SELECT * FROM cats ORDER BY id DESC")
+    fun observeCats(): Flow<List<CatEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveCats(cats: List<CatEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveCat(cat: CatEntity)
 }
+
+@Entity(tableName = "cats")
+data class CatEntity(
+    @PrimaryKey val id: Int,
+    val name: String,
+    val breed: String,
+    val location: String,
+    val description: String,
+    val imageUrl: String,
+)
 
 @Database(
     entities = [
@@ -104,11 +124,13 @@ interface CatlasDao {
         FavoriteBreedEntity::class,
         SubmittedCatEntity::class,
         LocalProfileEntity::class,
+        CatEntity::class,
     ],
-    version = 3,
+    version = 4,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
         AutoMigration(from = 2, to = 3),
+        AutoMigration(from = 3, to = 4),
     ],
     exportSchema = true,
 )

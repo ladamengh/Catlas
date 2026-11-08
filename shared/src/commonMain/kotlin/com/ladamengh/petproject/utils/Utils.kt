@@ -19,7 +19,7 @@ internal fun AppTab.toImageVector(): ImageVector? = when (this) {
     AppTab.Profile -> null
 }
 
-internal fun Cat.placeholderColor(): Color = when (id % 3) {
+internal fun Cat.artworkBackgroundColor(): Color = when (id % 3) {
     1 -> CatlasColors.artworkPeach
     2 -> CatlasColors.artworkSage
     else -> CatlasColors.artworkLilac

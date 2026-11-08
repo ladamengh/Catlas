@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import catlas.shared.generated.resources.Res
 import catlas.shared.generated.resources.home_subtitle
 import catlas.shared.generated.resources.home_title
+import catlas.shared.generated.resources.home_feed_empty
+import catlas.shared.generated.resources.home_feed_load_error
 import com.ladamengh.petproject.domain.model.Cat
 import com.ladamengh.petproject.ui.theme.CatlasColors
 import org.jetbrains.compose.resources.stringResource
@@ -64,6 +67,26 @@ fun HomeFeedScreen(
                 Text(
                     text = stringResource(Res.string.home_subtitle),
                     style = MaterialTheme.typography.bodyMedium,
+                    color = CatlasColors.textSecondary,
+                )
+            }
+        }
+        if (state.hasError) {
+            item {
+                Button(
+                    onClick = { onIntent(HomeFeedIntent.Retry) },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(Res.string.home_feed_load_error))
+                }
+            }
+        }
+        if (state.cats.isEmpty() && !state.hasError) {
+            item {
+                Text(
+                    text = stringResource(Res.string.home_feed_empty),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 48.dp),
+                    style = MaterialTheme.typography.bodyLarge,
                     color = CatlasColors.textSecondary,
                 )
             }

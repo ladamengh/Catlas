@@ -6,4 +6,5 @@ data class Cat(
     val breed: String,
     val location: String,
     val description: String,
+    val imageUrl: String? = null,
 )

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ladamengh.petproject.domain.repository.CatRepository
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -22,13 +23,12 @@ class HomeFeedViewModel(
     init {
         viewModelScope.launch {
             combine(catRepository.cats, catRepository.favoriteCatIds) { cats, favoriteCatIds ->
-                HomeFeedState(
-                    cats = cats,
-                    favoriteCatIds = favoriteCatIds,
-                    isLoading = false,
-                )
-            }.collect { _uiState.value = it }
+                cats to favoriteCatIds
+            }.collect { (cats, favoriteCatIds) ->
+                _uiState.value = _uiState.value.copy(cats = cats, favoriteCatIds = favoriteCatIds)
+            }
         }
+        loadCats()
     }
 
     fun onIntent(intent: HomeFeedIntent) {
@@ -37,6 +37,22 @@ class HomeFeedViewModel(
             is HomeFeedIntent.OpenCat -> effectChannel.trySend(
                 HomeFeedEffect.NavigateToCat(intent.catId),
             )
+            HomeFeedIntent.Retry -> loadCats()
+        }
+    }
+
+    private fun loadCats() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, hasError = false)
+            try {
+                catRepository.refreshCats()
+                _uiState.value = _uiState.value.copy(isLoading = false)
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (exception: Exception) {
+                println("Catlas home feed request failed: ${exception.message}")
+                _uiState.value = _uiState.value.copy(isLoading = false, hasError = true)
+            }
         }
     }
 }

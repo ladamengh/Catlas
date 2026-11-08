@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import catlas.shared.generated.resources.Res
 import catlas.shared.generated.resources.cat_about
 import catlas.shared.generated.resources.cat_image_description
+import catlas.shared.generated.resources.cat_location_unknown
 import catlas.shared.generated.resources.favorite_add
 import catlas.shared.generated.resources.favorite_breed_add
 import catlas.shared.generated.resources.favorite_breed_remove
@@ -32,7 +33,7 @@ import catlas.shared.generated.resources.favorite_remove
 import com.ladamengh.petproject.domain.model.Cat
 import com.ladamengh.petproject.feature.details.DetailsHeader
 import com.ladamengh.petproject.ui.theme.CatlasColors
-import com.ladamengh.petproject.utils.placeholderColor
+import com.ladamengh.petproject.utils.artworkBackgroundColor
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -51,7 +52,7 @@ fun CatDetailsScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             DetailsHeader(
-                backgroundColor = cat.placeholderColor(),
+                backgroundColor = cat.artworkBackgroundColor(),
                 imageDescription = stringResource(Res.string.cat_image_description, cat.name),
                 isFavorite = isFavorite,
                 favoriteDescription = stringResource(
@@ -59,6 +60,7 @@ fun CatDetailsScreen(
                 ),
                 onBack = onBack,
                 onFavoriteClick = onFavoriteClick,
+                imageUrl = cat.imageUrl,
             )
 
             Column(
@@ -109,7 +111,7 @@ fun CatDetailsScreen(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = cat.location,
+                    text = cat.location.ifBlank { stringResource(Res.string.cat_location_unknown) },
                     style = MaterialTheme.typography.bodyLarge,
                     color = CatlasColors.textSecondary,
                 )

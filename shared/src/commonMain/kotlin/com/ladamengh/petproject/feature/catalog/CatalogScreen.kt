@@ -43,6 +43,7 @@ import catlas.shared.generated.resources.favorite_breed_remove
 import catlas.shared.generated.resources.ic_cat
 import catlas.shared.generated.resources.catalog_subtitle
 import catlas.shared.generated.resources.catalog_title
+import catlas.shared.generated.resources.catalog_load_error
 import com.ladamengh.petproject.domain.model.CatBreed
 import com.ladamengh.petproject.ui.theme.CatlasColors
 import org.jetbrains.compose.resources.painterResource
@@ -93,7 +94,7 @@ fun CatalogScreen(
                     onClick = { onIntent(CatalogIntent.Retry) },
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text("Не удалось загрузить каталог. Повторить")
+                    Text(stringResource(Res.string.catalog_load_error))
                 }
             }
         }
@@ -138,7 +139,7 @@ private fun BreedCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(148.dp)
-                    .background(breed.id.placeholderColor()),
+                    .background(breed.id.artworkBackgroundColor()),
                 contentAlignment = Alignment.Center,
             ) {
                 if (!breed.imageUrl.isNullOrBlank()) {
@@ -206,7 +207,7 @@ private fun BreedCard(
 }
 
 @Composable
-private fun String.placeholderColor() = when (hashCode().mod(3)) {
+private fun String.artworkBackgroundColor() = when (hashCode().mod(3)) {
     0 -> CatlasColors.artworkPeach
     1 -> CatlasColors.artworkSage
     else -> CatlasColors.artworkLilac

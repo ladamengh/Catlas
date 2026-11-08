@@ -26,6 +26,8 @@
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Выберите фотографию для аватара профиля.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Сделайте фотографию кота, чтобы добавить его в общую ленту.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

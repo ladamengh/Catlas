@@ -27,16 +27,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
 import catlas.shared.generated.resources.Res
 import catlas.shared.generated.resources.cat_image_description
 import catlas.shared.generated.resources.favorite_add
 import catlas.shared.generated.resources.favorite_remove
+import catlas.shared.generated.resources.cat_location_unknown
 import catlas.shared.generated.resources.ic_cat
 import com.ladamengh.petproject.domain.model.Cat
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import com.ladamengh.petproject.ui.theme.CatlasColors
-import com.ladamengh.petproject.utils.placeholderColor
+import com.ladamengh.petproject.utils.artworkBackgroundColor
 
 @Composable
 fun CatPostCard(
@@ -59,20 +62,29 @@ fun CatPostCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(224.dp)
-                    .background(cat.placeholderColor()),
+                    .background(cat.artworkBackgroundColor()),
                 contentAlignment = Alignment.Center,
             ) {
-                Surface(
-                    modifier = Modifier.size(148.dp),
-                    shape = CircleShape,
-                    color = CatlasColors.artworkOverlay,
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.ic_cat),
+                if (!cat.imageUrl.isNullOrBlank()) {
+                    AsyncImage(
+                        model = cat.imageUrl,
                         contentDescription = stringResource(Res.string.cat_image_description, cat.name),
-                        modifier = Modifier.padding(27.dp),
-                        tint = CatlasColors.artworkInk,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxWidth().height(224.dp),
                     )
+                } else {
+                    Surface(
+                        modifier = Modifier.size(148.dp),
+                        shape = CircleShape,
+                        color = CatlasColors.artworkOverlay,
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.ic_cat),
+                            contentDescription = stringResource(Res.string.cat_image_description, cat.name),
+                            modifier = Modifier.padding(27.dp),
+                            tint = CatlasColors.artworkInk,
+                        )
+                    }
                 }
                 IconButton(
                     onClick = onFavoriteClick,
@@ -105,7 +117,7 @@ fun CatPostCard(
                         color = CatlasColors.textPrimary,
                     )
                     Text(
-                        text = cat.location,
+                        text = cat.location.ifBlank { stringResource(Res.string.cat_location_unknown) },
                         style = MaterialTheme.typography.labelLarge,
                         color = CatlasColors.textSecondary,
                     )
