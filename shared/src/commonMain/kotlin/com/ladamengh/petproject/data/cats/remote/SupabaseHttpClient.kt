@@ -9,6 +9,10 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
+internal val supabaseJson = Json {
+    ignoreUnknownKeys = true
+}
+
 fun createSupabaseHttpClient(): HttpClient =
     HttpClient {
         expectSuccess = true
@@ -31,10 +35,6 @@ fun createSupabaseHttpClient(): HttpClient =
             }
         }
         install(ContentNegotiation) {
-            json(
-                Json {
-                    ignoreUnknownKeys = true
-                },
-            )
+            json(supabaseJson)
         }
     }

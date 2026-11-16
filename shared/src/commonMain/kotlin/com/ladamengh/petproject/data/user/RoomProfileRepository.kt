@@ -27,9 +27,9 @@ data class SubmittedCatRecord(
 /** Local profile and submitted-cat history persisted in the shared Room database. */
 class RoomProfileRepository(
     database: CatlasDatabase,
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main),
 ) : ProfileRepository {
     private val dao = database.dao()
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     override val profile: StateFlow<UserProfile> = dao.observeProfile()
         .map { entity ->

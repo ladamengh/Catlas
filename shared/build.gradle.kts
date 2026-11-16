@@ -25,6 +25,8 @@ kotlin {
         }
     }
 
+    jvm()
+
     listOf(
         iosArm64(),
         iosSimulatorArm64(),
@@ -61,11 +63,23 @@ kotlin {
             implementation(libs.ktor.client.logging)
             implementation(libs.ktor.serialization.kotlinx.json)
         }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
+
+        jvmTest.dependencies {
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.junit4)
+            implementation(libs.mockito.core)
+            implementation(libs.mockito.kotlin)
+        }
     }
 }
 
 dependencies {
     add("kspAndroid", libs.room.compiler)
+    add("kspJvm", libs.room.compiler)
     add("kspIosArm64", libs.room.compiler)
     add("kspIosSimulatorArm64", libs.room.compiler)
 }
