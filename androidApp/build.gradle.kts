@@ -57,6 +57,7 @@ android {
 
 dependencies {
     implementation(projects.shared)
+    implementation(project(":core"))
     implementation(libs.koin.core)
     implementation(libs.androidx.drawerlayout)
     implementation(libs.androidx.activity.compose)

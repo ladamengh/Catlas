@@ -16,10 +16,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import catlas.shared.generated.resources.Res
-import catlas.shared.generated.resources.ic_cat
+import com.ladamengh.petproject.resources.Res
+import com.ladamengh.petproject.resources.ic_cat
 import com.ladamengh.petproject.ui.theme.CatlasColors
-import com.ladamengh.petproject.utils.toImageVector
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 

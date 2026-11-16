@@ -5,30 +5,6 @@ plugins {
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.room)
-    alias(libs.plugins.detekt)
-}
-
-detekt {
-    config.setFrom(rootProject.file("config/detekt/detekt.yml"))
-    buildUponDefaultConfig = true
-}
-
-tasks.withType<dev.detekt.gradle.Detekt>().configureEach {
-    exclude("**/generated/**")
-}
-
-tasks.named("detekt") {
-    dependsOn(
-        "detektCommonMainSourceSet",
-        "detektCommonTestSourceSet",
-        "detektAndroidMainSourceSet",
-        "detektIosMainSourceSet",
-        "detektJvmMainSourceSet",
-        "detektJvmTestSourceSet",
-    )
 }
 
 kotlin {
@@ -48,10 +24,7 @@ kotlin {
 
     jvm()
 
-    listOf(
-        iosArm64(),
-        iosSimulatorArm64(),
-    ).forEach { iosTarget ->
+    listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "shared"
             isStatic = true
@@ -60,6 +33,13 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":core"))
+            implementation(project(":feature:home-feed"))
+            implementation(project(":feature:catalog"))
+            implementation(project(":feature:favorites"))
+            implementation(project(":feature:profile"))
+            implementation(project(":feature:camera"))
+
             implementation(libs.compose.runtime)
             implementation(libs.compose.ui)
             implementation(libs.compose.foundation)
@@ -69,42 +49,11 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.androidx.navigation.compose)
-            implementation(libs.kotlinx.coroutines.core)
             implementation(libs.room.runtime)
-            implementation(libs.sqlite.bundled)
-            implementation(libs.coil.compose)
-            implementation(libs.coil.network.ktor3)
-            implementation(libs.imagepickerkmp.photo)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.engine.defaults)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.client.logging)
-            implementation(libs.ktor.serialization.kotlinx.json)
-        }
-
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-        }
-
-        jvmTest.dependencies {
-            implementation(libs.kotlinx.coroutines.test)
-            implementation(libs.junit4)
-            implementation(libs.mockito.core)
-            implementation(libs.mockito.kotlin)
         }
     }
-}
-
-dependencies {
-    add("kspAndroid", libs.room.compiler)
-    add("kspJvm", libs.room.compiler)
-    add("kspIosArm64", libs.room.compiler)
-    add("kspIosSimulatorArm64", libs.room.compiler)
-}
-
-room {
-    schemaDirectory("$projectDir/schemas")
 }
