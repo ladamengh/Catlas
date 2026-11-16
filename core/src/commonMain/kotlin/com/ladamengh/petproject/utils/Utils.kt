@@ -19,5 +19,5 @@ fun createRandomHexId(): String = Random.nextBytes(RANDOM_ID_BYTE_COUNT)
 fun Cat.artworkBackgroundColor(): Color = when (id % ARTWORK_VARIANT_COUNT) {
     1 -> CatlasColors.artworkPeach
     2 -> CatlasColors.artworkSage
-    else -> CatlasColors.artworkLilac
+    else -> CatlasColors.artworkOlive
 }

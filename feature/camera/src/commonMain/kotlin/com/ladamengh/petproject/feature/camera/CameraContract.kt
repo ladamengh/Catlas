@@ -17,7 +17,7 @@ sealed interface CameraIntent {
     data class ChangeBreed(val value: String) : CameraIntent
     data class ChangeCity(val value: String) : CameraIntent
     data class ChangeDescription(val value: String) : CameraIntent
-    data class Save(val validationError: String, val saveError: String) : CameraIntent
+    data class Save(val saveError: String) : CameraIntent
     data class ShowError(val message: String) : CameraIntent
 }
 

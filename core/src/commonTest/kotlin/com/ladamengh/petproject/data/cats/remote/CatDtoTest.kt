@@ -2,8 +2,6 @@ package com.ladamengh.petproject.data.cats.remote
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 
 class CatDtoTest {
@@ -42,13 +40,15 @@ class CatDtoTest {
     }
 
     @Test
-    fun rejectsPayloadMissingRequiredFields() {
+    fun decodesPayloadWithoutOptionalCatDetails() {
         // Arrange
-        val incompleteJson = """{"id":42,"name":"Барсик"}"""
+        val incompleteJson = """{"id":42,"image_url":"https://example.test/cat.jpg"}"""
 
         // Act / Assert
-        assertFailsWith<SerializationException> {
-            supabaseJson.decodeFromString<CatDto>(incompleteJson)
-        }
+        val dto = supabaseJson.decodeFromString<CatDto>(incompleteJson)
+        assertEquals("", dto.toDomain().name)
+        assertEquals("", dto.toDomain().breed)
+        assertEquals("", dto.toDomain().location)
+        assertEquals("", dto.toDomain().description)
     }
 }

@@ -25,8 +25,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ladamengh.petproject.resources.Res
 import com.ladamengh.petproject.resources.cat_about
+import com.ladamengh.petproject.resources.cat_breed_unknown
 import com.ladamengh.petproject.resources.cat_image_description
 import com.ladamengh.petproject.resources.cat_location_unknown
+import com.ladamengh.petproject.resources.cat_name_unknown
 import com.ladamengh.petproject.resources.favorite_add
 import com.ladamengh.petproject.resources.favorite_breed_add
 import com.ladamengh.petproject.resources.favorite_breed_remove
@@ -47,6 +49,7 @@ fun CatDetailsScreen(
     onBreedFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val catName = cat.name.ifBlank { stringResource(Res.string.cat_name_unknown) }
     Surface(
         modifier = modifier,
         color = CatlasColors.screenBackground,
@@ -54,7 +57,7 @@ fun CatDetailsScreen(
         Column(modifier = Modifier.fillMaxSize()) {
             DetailsHeader(
                 backgroundColor = cat.artworkBackgroundColor(),
-                imageDescription = stringResource(Res.string.cat_image_description, cat.name),
+                imageDescription = stringResource(Res.string.cat_image_description, catName),
                 isFavorite = isFavorite,
                 favoriteDescription = stringResource(
                     if (isFavorite) Res.string.favorite_remove else Res.string.favorite_add,
@@ -64,7 +67,7 @@ fun CatDetailsScreen(
                 imageUrl = cat.imageUrl,
             )
 
-            CatDetailsContent(cat, isBreedFavorite, onBreedFavoriteClick)
+            CatDetailsContent(cat, catName, isBreedFavorite, onBreedFavoriteClick)
         }
     }
 }
@@ -72,9 +75,11 @@ fun CatDetailsScreen(
 @Composable
 private fun ColumnScope.CatDetailsContent(
     cat: Cat,
+    catName: String,
     isBreedFavorite: Boolean,
     onBreedFavoriteClick: () -> Unit,
 ) {
+    val catBreed = cat.breed.ifBlank { stringResource(Res.string.cat_breed_unknown) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -83,13 +88,18 @@ private fun ColumnScope.CatDetailsContent(
             .padding(top = 24.dp, bottom = 16.dp),
     ) {
         Text(
-            text = cat.name,
+            text = catName,
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = CatlasColors.textPrimary,
         )
         Spacer(modifier = Modifier.height(8.dp))
-        CatBreedRow(cat.breed, isBreedFavorite, onBreedFavoriteClick)
+        CatBreedRow(
+            breed = catBreed,
+            isFavorite = isBreedFavorite,
+            canFavorite = cat.breed.isNotBlank(),
+            onFavoriteClick = onBreedFavoriteClick,
+        )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = cat.location.ifBlank { stringResource(Res.string.cat_location_unknown) },
@@ -117,6 +127,7 @@ private fun ColumnScope.CatDetailsContent(
 private fun CatBreedRow(
     breed: String,
     isFavorite: Boolean,
+    canFavorite: Boolean,
     onFavoriteClick: () -> Unit,
 ) {
     Row(
@@ -129,14 +140,16 @@ private fun CatBreedRow(
             style = MaterialTheme.typography.titleMedium,
             color = CatlasColors.textTertiary,
         )
-        IconButton(onClick = onFavoriteClick) {
-            Icon(
-                imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                contentDescription = stringResource(
-                    if (isFavorite) Res.string.favorite_breed_remove else Res.string.favorite_breed_add,
-                ),
-                tint = if (isFavorite) CatlasColors.favorite else CatlasColors.favoriteInactive,
-            )
+        if (canFavorite) {
+            IconButton(onClick = onFavoriteClick) {
+                Icon(
+                    imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                    contentDescription = stringResource(
+                        if (isFavorite) Res.string.favorite_breed_remove else Res.string.favorite_breed_add,
+                    ),
+                    tint = if (isFavorite) CatlasColors.favorite else CatlasColors.favoriteInactive,
+                )
+            }
         }
     }
 }

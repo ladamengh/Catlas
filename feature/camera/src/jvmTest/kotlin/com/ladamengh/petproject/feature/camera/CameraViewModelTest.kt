@@ -39,7 +39,7 @@ class CameraViewModelTest {
         viewModel.onIntent(CameraIntent.ChangeBreed("Сиамская"))
 
         // Act
-        viewModel.onIntent(CameraIntent.Save("Заполните данные", "Не удалось сохранить"))
+        viewModel.onIntent(CameraIntent.Save("Не удалось сохранить"))
         advanceUntilIdle()
 
         // Assert
@@ -49,21 +49,25 @@ class CameraViewModelTest {
     }
 
     @Test
-    fun saveWithMissingRequiredFieldsShowsValidationError() = runViewModelTest {
+    fun saveWithOnlyPhotoPublishesWithEmptyOptionalFields() = runViewModelTest {
         // Arrange
+        whenever(catRepository.publishCat(any(), any(), any(), any(), any())).thenReturn(Unit)
         val viewModel = CameraViewModel(catRepository)
         viewModel.onIntent(CameraIntent.PhotoCaptured(byteArrayOf(1, 2, 3)))
-        viewModel.onIntent(CameraIntent.ChangeName("   "))
-        viewModel.onIntent(CameraIntent.ChangeBreed("Сиамская"))
 
         // Act
-        viewModel.onIntent(CameraIntent.Save("Укажите имя и породу", "Ошибка сохранения"))
+        viewModel.onIntent(CameraIntent.Save("Ошибка сохранения"))
         advanceUntilIdle()
 
         // Assert
-        assertEquals("Укажите имя и породу", viewModel.uiState.value.error)
         assertFalse(viewModel.uiState.value.isSaving)
-        verify(catRepository, never()).publishCat(any(), any(), any(), any(), any())
+        verify(catRepository).publishCat(
+            eq(""),
+            eq(""),
+            eq(""),
+            eq(""),
+            any(),
+        )
     }
 
     @Test
@@ -81,7 +85,7 @@ class CameraViewModelTest {
         viewModel.onIntent(CameraIntent.ChangeBreed("Сиамская"))
         viewModel.onIntent(CameraIntent.ChangeCity("  Казань  "))
         viewModel.onIntent(CameraIntent.ChangeDescription("  Спокойная  "))
-        viewModel.onIntent(CameraIntent.Save("Заполните поля", "Ошибка"))
+        viewModel.onIntent(CameraIntent.Save("Ошибка"))
         advanceUntilIdle()
 
         // Assert
@@ -112,7 +116,7 @@ class CameraViewModelTest {
         viewModel.onIntent(CameraIntent.ChangeBreed("Дворянин"))
 
         // Act
-        viewModel.onIntent(CameraIntent.Save("Заполните поля", "Общая ошибка"))
+        viewModel.onIntent(CameraIntent.Save("Общая ошибка"))
         advanceUntilIdle()
 
         // Assert

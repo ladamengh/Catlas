@@ -36,7 +36,6 @@ import com.ladamengh.petproject.resources.camera_description_label
 import com.ladamengh.petproject.resources.camera_details_title
 import com.ladamengh.petproject.resources.camera_photo_description
 import com.ladamengh.petproject.resources.camera_publish
-import com.ladamengh.petproject.resources.camera_required_fields_error
 import com.ladamengh.petproject.resources.camera_retake_photo
 import com.ladamengh.petproject.resources.camera_save_error
 import com.ladamengh.petproject.resources.camera_take_photo
@@ -200,11 +199,10 @@ private fun PublishCatButton(
     isSaving: Boolean,
     onIntent: (CameraIntent) -> Unit,
 ) {
-    val validationError = stringResource(Res.string.camera_required_fields_error)
     val saveError = stringResource(Res.string.camera_save_error)
     Button(
         onClick = {
-            onIntent(CameraIntent.Save(validationError = validationError, saveError = saveError))
+            onIntent(CameraIntent.Save(saveError = saveError))
         },
         enabled = !isSaving,
         modifier = Modifier.fillMaxWidth(),

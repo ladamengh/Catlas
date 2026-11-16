@@ -19,7 +19,8 @@ class SupabaseCatsService(
 ) {
     private val baseUrl = projectUrl.trimEnd('/')
     private val catsUrl = "$baseUrl/rest/v1/cats"
-    private val storageUrl = "$baseUrl/storage/v1/object/cat-images"
+    private val storageObjectsUrl = "$baseUrl/storage/v1/object"
+    private val catImagesUrl = "$storageObjectsUrl/cat-images"
 
     suspend fun getCats(): List<CatDto> = httpClient.get(catsUrl) {
         parameter("select", "id,name,breed,location,description,image_url")
@@ -43,11 +44,11 @@ class SupabaseCatsService(
             setBody(
                 listOf(
                     CreateCatDto(
-                        name = name.trim(),
-                        breed = breed.trim(),
-                        location = location.trim(),
-                        description = description.trim(),
-                        imageUrl = "$storageUrl/public/$imagePath",
+                        name = name.trim().takeIf(String::isNotEmpty),
+                        breed = breed.trim().takeIf(String::isNotEmpty),
+                        location = location.trim().takeIf(String::isNotEmpty),
+                        description = description.trim().takeIf(String::isNotEmpty),
+                        imageUrl = "$storageObjectsUrl/public/cat-images/$imagePath",
                     ),
                 ),
             )
@@ -55,7 +56,7 @@ class SupabaseCatsService(
     }
 
     private suspend fun uploadImage(path: String, bytes: ByteArray) {
-        httpClient.post("$storageUrl/$path") {
+        httpClient.post("$catImagesUrl/$path") {
             withApiKey()
             contentType(ContentType.Image.JPEG)
             setBody(bytes)

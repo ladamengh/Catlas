@@ -34,6 +34,8 @@ import com.ladamengh.petproject.resources.cat_image_description
 import com.ladamengh.petproject.resources.favorite_add
 import com.ladamengh.petproject.resources.favorite_remove
 import com.ladamengh.petproject.resources.cat_location_unknown
+import com.ladamengh.petproject.resources.cat_name_unknown
+import com.ladamengh.petproject.resources.cat_breed_unknown
 import com.ladamengh.petproject.resources.ic_cat
 import com.ladamengh.petproject.domain.model.Cat
 import org.jetbrains.compose.resources.painterResource
@@ -70,6 +72,7 @@ private fun CatPostImage(
     isFavorite: Boolean,
     onFavoriteClick: () -> Unit,
 ) {
+    val catName = cat.name.ifBlank { stringResource(Res.string.cat_name_unknown) }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -80,12 +83,12 @@ private fun CatPostImage(
         if (!cat.imageUrl.isNullOrBlank()) {
             AsyncImage(
                 model = cat.imageUrl,
-                contentDescription = stringResource(Res.string.cat_image_description, cat.name),
+                contentDescription = stringResource(Res.string.cat_image_description, catName),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxWidth().height(224.dp),
             )
         } else {
-            CatArtworkPlaceholder(cat.name)
+            CatArtworkPlaceholder(catName)
         }
         FavoriteButton(
             modifier = Modifier
@@ -134,6 +137,8 @@ private fun FavoriteButton(
 
 @Composable
 private fun CatPostDetails(cat: Cat) {
+    val catName = cat.name.ifBlank { stringResource(Res.string.cat_name_unknown) }
+    val catBreed = cat.breed.ifBlank { stringResource(Res.string.cat_breed_unknown) }
     Column(modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -141,7 +146,7 @@ private fun CatPostDetails(cat: Cat) {
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                text = cat.name,
+                text = catName,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold,
                 color = CatlasColors.textPrimary,
@@ -153,7 +158,11 @@ private fun CatPostDetails(cat: Cat) {
             )
         }
         Spacer(modifier = Modifier.height(4.dp))
-        Text(cat.breed, style = MaterialTheme.typography.bodyMedium, color = CatlasColors.textTertiary)
+        Text(
+            catBreed,
+            style = MaterialTheme.typography.bodyMedium,
+            color = CatlasColors.textTertiary,
+        )
         Spacer(modifier = Modifier.height(10.dp))
         Text(cat.description, style = MaterialTheme.typography.bodyMedium, color = CatlasColors.textBody, maxLines = 2)
     }

@@ -1,10 +1,15 @@
 package com.ladamengh.petproject.app
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -31,9 +36,33 @@ import androidx.navigation.NavGraphBuilder
 @Composable
 fun CatlasApp(koinApplication: KoinApplication) {
     KoinIsolatedContext(koinApplication) {
-        MaterialTheme {
+        val focusManager = LocalFocusManager.current
+        val keyboardController = LocalSoftwareKeyboardController.current
+        MaterialTheme(
+            colorScheme = lightColorScheme(
+                primary = CatlasColors.accent,
+                onPrimary = CatlasColors.cardSurface,
+                primaryContainer = CatlasColors.accentContainer,
+                onPrimaryContainer = CatlasColors.accentOnContainer,
+                secondary = CatlasColors.accent,
+                onSecondary = CatlasColors.cardSurface,
+                secondaryContainer = CatlasColors.accentContainer,
+                onSecondaryContainer = CatlasColors.accentOnContainer,
+                tertiary = CatlasColors.artworkSage,
+                onTertiary = CatlasColors.accentOnContainer,
+                tertiaryContainer = CatlasColors.accentContainer,
+                onTertiaryContainer = CatlasColors.accentOnContainer,
+            ),
+        ) {
             Surface(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(focusManager, keyboardController) {
+                        detectTapGestures {
+                            focusManager.clearFocus()
+                            keyboardController?.hide()
+                        }
+                    },
                 color = CatlasColors.screenBackground,
             ) {
                 CatlasNavigation()

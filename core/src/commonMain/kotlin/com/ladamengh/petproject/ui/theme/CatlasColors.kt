@@ -3,6 +3,9 @@ package com.ladamengh.petproject.ui.theme
 import androidx.compose.ui.graphics.Color
 
 object CatlasColors {
+    val accent = Color(0xFF959F31)
+    val accentContainer = Color(0xFFE8EBCF)
+    val accentOnContainer = Color(0xFF30350D)
     val screenBackground = Color(0xFFFFFAF6)
     val segmentTrack = Color(0xFFF0E9E3)
     val cardSurface = Color.White
@@ -16,5 +19,5 @@ object CatlasColors {
     val favoriteInactive = Color(0xFF51443F)
     val artworkPeach = Color(0xFFF5D9C8)
     val artworkSage = Color(0xFFDCE7D6)
-    val artworkLilac = Color(0xFFE5DDF0)
+    val artworkOlive = Color(0xFFE8EBCF)
 }

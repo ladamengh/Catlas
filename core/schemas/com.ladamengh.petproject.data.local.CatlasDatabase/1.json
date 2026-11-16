@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "a3206343cbac50eac45d0159c2755ddf",
+    "identityHash": "d6f2ce811e9f26b7c62682459ff61b5e",
     "entities": [
       {
         "tableName": "favorite_cats",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`catId` INTEGER NOT NULL, `name` TEXT NOT NULL, `breed` TEXT NOT NULL, `location` TEXT NOT NULL, `description` TEXT NOT NULL, PRIMARY KEY(`catId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`catId` INTEGER NOT NULL, `name` TEXT NOT NULL, `breed` TEXT NOT NULL, `location` TEXT NOT NULL, `description` TEXT NOT NULL, `imageUrl` TEXT, PRIMARY KEY(`catId`))",
         "fields": [
           {
             "fieldPath": "catId",
@@ -37,6 +37,11 @@
             "columnName": "description",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "imageUrl",
+            "columnName": "imageUrl",
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -106,7 +111,7 @@
       },
       {
         "tableName": "local_profile",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`key` INTEGER NOT NULL, `localId` TEXT NOT NULL, `displayName` TEXT NOT NULL, PRIMARY KEY(`key`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`key` INTEGER NOT NULL, `localId` TEXT NOT NULL, `displayName` TEXT NOT NULL, `description` TEXT, `city` TEXT, `avatarImage` BLOB, PRIMARY KEY(`key`))",
         "fields": [
           {
             "fieldPath": "key",
@@ -125,6 +130,21 @@
             "columnName": "displayName",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "city",
+            "columnName": "city",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "avatarImage",
+            "columnName": "avatarImage",
+            "affinity": "BLOB"
           }
         ],
         "primaryKey": {
@@ -133,11 +153,59 @@
             "key"
           ]
         }
+      },
+      {
+        "tableName": "cats",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `breed` TEXT NOT NULL, `location` TEXT NOT NULL, `description` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "breed",
+            "columnName": "breed",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "location",
+            "columnName": "location",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "imageUrl",
+            "columnName": "imageUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a3206343cbac50eac45d0159c2755ddf')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd6f2ce811e9f26b7c62682459ff61b5e')"
     ]
   }
 }

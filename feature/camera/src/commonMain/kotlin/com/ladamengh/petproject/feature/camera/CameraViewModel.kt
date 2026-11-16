@@ -38,10 +38,6 @@ class CameraViewModel(
     private fun saveCat(intent: CameraIntent.Save) {
         val state = _uiState.value
         val photo = state.photo ?: return
-        if (state.name.isBlank() || state.breed.isBlank()) {
-            _uiState.update { it.copy(error = intent.validationError) }
-            return
-        }
 
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true, error = null) }

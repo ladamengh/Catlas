@@ -230,5 +230,5 @@ private fun androidx.compose.foundation.layout.BoxScope.BreedFavoriteButton(
 private fun String.artworkBackgroundColor() = when (hashCode().mod(ARTWORK_VARIANT_COUNT)) {
     0 -> CatlasColors.artworkPeach
     1 -> CatlasColors.artworkSage
-    else -> CatlasColors.artworkLilac
+    else -> CatlasColors.artworkOlive
 }

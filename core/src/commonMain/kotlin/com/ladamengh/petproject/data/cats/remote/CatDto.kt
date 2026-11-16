@@ -7,27 +7,27 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CatDto(
     val id: Int,
-    val name: String,
-    val breed: String,
-    val location: String,
-    val description: String,
+    val name: String? = null,
+    val breed: String? = null,
+    val location: String? = null,
+    val description: String? = null,
     @SerialName("image_url") val imageUrl: String,
 )
 
 @Serializable
 data class CreateCatDto(
-    val name: String,
-    val breed: String,
-    val location: String,
-    val description: String,
+    val name: String? = null,
+    val breed: String? = null,
+    val location: String? = null,
+    val description: String? = null,
     @SerialName("image_url") val imageUrl: String,
 )
 
 fun CatDto.toDomain() = Cat(
     id = id,
-    name = name,
-    breed = breed,
-    location = location,
-    description = description,
+    name = name.orEmpty(),
+    breed = breed.orEmpty(),
+    location = location.orEmpty(),
+    description = description.orEmpty(),
     imageUrl = imageUrl,
 )

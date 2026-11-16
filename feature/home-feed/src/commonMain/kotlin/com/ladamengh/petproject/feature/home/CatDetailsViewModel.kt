@@ -26,7 +26,9 @@ class CatDetailsViewModel(
                 CatDetailsState(
                     cat = cat,
                     isFavorite = catId in favoriteCatIds,
-                    isBreedFavorite = cat?.breed in favoriteBreeds,
+                    isBreedFavorite = cat?.breed?.let { breed ->
+                        breed.isNotBlank() && breed in favoriteBreeds
+                    } ?: false,
                 )
             }.collect { _uiState.value = it }
         }
@@ -36,7 +38,9 @@ class CatDetailsViewModel(
         val cat = _uiState.value.cat ?: return
         when (intent) {
             CatDetailsIntent.ToggleFavorite -> catRepository.toggleFavoriteCat(cat.id)
-            CatDetailsIntent.ToggleBreedFavorite -> catRepository.toggleFavoriteBreed(cat.breed)
+            CatDetailsIntent.ToggleBreedFavorite -> {
+                if (cat.breed.isNotBlank()) catRepository.toggleFavoriteBreed(cat.breed)
+            }
         }
     }
 }
