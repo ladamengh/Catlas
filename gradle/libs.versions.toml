@@ -30,6 +30,7 @@ koin = "4.2.2"
 ktor = "3.6.1"
 kaspresso = "1.6.1"
 mockWebServer = "5.5.1"
+detekt = "2.0.0-alpha.3"
 
 [libraries]
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
@@ -84,3 +85,4 @@ composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "k
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }

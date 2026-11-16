@@ -8,6 +8,27 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
+    alias(libs.plugins.detekt)
+}
+
+detekt {
+    config.setFrom(rootProject.file("config/detekt/detekt.yml"))
+    buildUponDefaultConfig = true
+}
+
+tasks.withType<dev.detekt.gradle.Detekt>().configureEach {
+    exclude("**/generated/**")
+}
+
+tasks.named("detekt") {
+    dependsOn(
+        "detektCommonMainSourceSet",
+        "detektCommonTestSourceSet",
+        "detektAndroidMainSourceSet",
+        "detektIosMainSourceSet",
+        "detektJvmMainSourceSet",
+        "detektJvmTestSourceSet",
+    )
 }
 
 kotlin {

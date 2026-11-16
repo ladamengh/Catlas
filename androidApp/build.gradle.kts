@@ -2,6 +2,16 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.detekt)
+}
+
+detekt {
+    config.setFrom(rootProject.file("config/detekt/detekt.yml"))
+    buildUponDefaultConfig = true
+}
+
+tasks.withType<dev.detekt.gradle.Detekt>().configureEach {
+    exclude("**/generated/**")
 }
 
 kotlin {
