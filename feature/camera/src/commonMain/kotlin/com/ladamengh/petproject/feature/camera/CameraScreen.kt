@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -41,6 +42,7 @@ import com.ladamengh.petproject.resources.camera_save_error
 import com.ladamengh.petproject.resources.camera_take_photo
 import com.ladamengh.petproject.resources.camera_title
 import com.ladamengh.petproject.ui.theme.CatlasColors
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -52,8 +54,6 @@ fun CameraScreen(
     onChoosePhoto: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val validationError = stringResource(Res.string.camera_required_fields_error)
-    val saveError = stringResource(Res.string.camera_save_error)
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -67,131 +67,166 @@ fun CameraScreen(
             fontWeight = FontWeight.Bold,
             color = CatlasColors.textPrimary,
         )
-
-        val photo = state.photo
-        if (photo == null) {
-            Box(
-                modifier = Modifier.fillMaxWidth().height(360.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    androidx.compose.material3.Icon(
-                        imageVector = Icons.Outlined.PhotoCamera,
-                        contentDescription = null,
-                        modifier = Modifier.height(80.dp),
-                        tint = CatlasColors.favorite,
-                    )
-                    Spacer(Modifier.height(16.dp))
-                    Text(
-                        text = stringResource(Res.string.camera_capture_hint),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = CatlasColors.textSecondary,
-                    )
-                }
-            }
-            state.error?.let {
-                Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
-            }
-            Button(
-                onClick = onTakePhoto,
-                enabled = !isCameraLoading,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                if (isCameraLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.height(20.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    )
-                } else {
-                    Text(stringResource(Res.string.camera_take_photo))
-                }
-            }
-            OutlinedButton(
-                onClick = onChoosePhoto,
-                enabled = !isCameraLoading,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(stringResource(Res.string.camera_choose_from_gallery))
-            }
+        if (state.photo == null) {
+            PhotoPickerContent(state, isCameraLoading, onTakePhoto, onChoosePhoto)
         } else {
-            AsyncImage(
-                model = photo,
-                contentDescription = stringResource(Res.string.camera_photo_description),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxWidth().height(300.dp),
-            )
-            OutlinedButton(
-                onClick = { onIntent(CameraIntent.RetakePhoto); onTakePhoto() },
-                enabled = !state.isSaving,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(stringResource(Res.string.camera_retake_photo))
-            }
-            Text(
-                text = stringResource(Res.string.camera_details_title),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold,
-                color = CatlasColors.textPrimary,
-            )
-            OutlinedTextField(
-                value = state.name,
-                onValueChange = { onIntent(CameraIntent.ChangeName(it)) },
-                label = { Text(stringResource(Res.string.camera_cat_name_label)) },
-                singleLine = true,
-                enabled = !state.isSaving,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            OutlinedTextField(
-                value = state.breed,
-                onValueChange = { onIntent(CameraIntent.ChangeBreed(it)) },
-                label = { Text(stringResource(Res.string.camera_cat_breed_label)) },
-                singleLine = true,
-                enabled = !state.isSaving,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            OutlinedTextField(
-                value = state.city,
-                onValueChange = { onIntent(CameraIntent.ChangeCity(it)) },
-                label = { Text(stringResource(Res.string.camera_city_label)) },
-                singleLine = true,
-                enabled = !state.isSaving,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            OutlinedTextField(
-                value = state.description,
-                onValueChange = { onIntent(CameraIntent.ChangeDescription(it)) },
-                label = { Text(stringResource(Res.string.camera_description_label)) },
-                minLines = 3,
-                maxLines = 5,
-                enabled = !state.isSaving,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            state.error?.let {
-                Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
-            }
-            Button(
-                onClick = {
-                    onIntent(
-                        CameraIntent.Save(
-                            validationError = validationError,
-                            saveError = saveError,
-                        ),
-                    )
-                },
-                enabled = !state.isSaving,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                if (state.isSaving) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.height(20.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    )
-                } else {
-                    Text(stringResource(Res.string.camera_publish))
-                }
-            }
+            CatSubmissionForm(state, onIntent, onTakePhoto)
         }
     }
+}
+
+@Composable
+private fun PhotoPickerContent(
+    state: CameraState,
+    isCameraLoading: Boolean,
+    onTakePhoto: () -> Unit,
+    onChoosePhoto: () -> Unit,
+) {
+    Box(
+        modifier = Modifier.fillMaxWidth().height(360.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                imageVector = Icons.Outlined.PhotoCamera,
+                contentDescription = null,
+                modifier = Modifier.height(80.dp),
+                tint = CatlasColors.favorite,
+            )
+            Spacer(Modifier.height(16.dp))
+            Text(
+                text = stringResource(Res.string.camera_capture_hint),
+                style = MaterialTheme.typography.bodyLarge,
+                color = CatlasColors.textSecondary,
+            )
+        }
+    }
+    state.error?.let { CameraError(it) }
+    Button(
+        onClick = onTakePhoto,
+        enabled = !isCameraLoading,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        CameraProgressOrLabel(isLoading = isCameraLoading, label = Res.string.camera_take_photo)
+    }
+    OutlinedButton(
+        onClick = onChoosePhoto,
+        enabled = !isCameraLoading,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text(stringResource(Res.string.camera_choose_from_gallery))
+    }
+}
+
+@Composable
+private fun CatSubmissionForm(
+    state: CameraState,
+    onIntent: (CameraIntent) -> Unit,
+    onTakePhoto: () -> Unit,
+) {
+    AsyncImage(
+        model = state.photo,
+        contentDescription = stringResource(Res.string.camera_photo_description),
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxWidth().height(300.dp),
+    )
+    OutlinedButton(
+        onClick = {
+            onIntent(CameraIntent.RetakePhoto)
+            onTakePhoto()
+        },
+        enabled = !state.isSaving,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text(stringResource(Res.string.camera_retake_photo))
+    }
+    Text(
+        text = stringResource(Res.string.camera_details_title),
+        style = MaterialTheme.typography.titleLarge,
+        fontWeight = FontWeight.SemiBold,
+        color = CatlasColors.textPrimary,
+    )
+    CatDetailsFields(state, onIntent)
+    state.error?.let { CameraError(it) }
+    PublishCatButton(state.isSaving, onIntent)
+}
+
+@Composable
+private fun CatDetailsFields(
+    state: CameraState,
+    onIntent: (CameraIntent) -> Unit,
+) {
+    CatTextField(state.name, Res.string.camera_cat_name_label, !state.isSaving) {
+        onIntent(CameraIntent.ChangeName(it))
+    }
+    CatTextField(state.breed, Res.string.camera_cat_breed_label, !state.isSaving) {
+        onIntent(CameraIntent.ChangeBreed(it))
+    }
+    CatTextField(state.city, Res.string.camera_city_label, !state.isSaving) {
+        onIntent(CameraIntent.ChangeCity(it))
+    }
+    CatTextField(
+        value = state.description,
+        label = Res.string.camera_description_label,
+        enabled = !state.isSaving,
+        minLines = 3,
+        maxLines = 5,
+    ) { onIntent(CameraIntent.ChangeDescription(it)) }
+}
+
+@Composable
+private fun CatTextField(
+    value: String,
+    label: StringResource,
+    enabled: Boolean,
+    minLines: Int = 1,
+    maxLines: Int = 1,
+    onValueChange: (String) -> Unit,
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(stringResource(label)) },
+        singleLine = minLines == 1 && maxLines == 1,
+        minLines = minLines,
+        maxLines = maxLines,
+        enabled = enabled,
+        modifier = Modifier.fillMaxWidth(),
+    )
+}
+
+@Composable
+private fun PublishCatButton(
+    isSaving: Boolean,
+    onIntent: (CameraIntent) -> Unit,
+) {
+    val validationError = stringResource(Res.string.camera_required_fields_error)
+    val saveError = stringResource(Res.string.camera_save_error)
+    Button(
+        onClick = {
+            onIntent(CameraIntent.Save(validationError = validationError, saveError = saveError))
+        },
+        enabled = !isSaving,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        CameraProgressOrLabel(isLoading = isSaving, label = Res.string.camera_publish)
+    }
+}
+
+@Composable
+private fun CameraProgressOrLabel(isLoading: Boolean, label: StringResource) {
+    if (isLoading) {
+        CircularProgressIndicator(
+            modifier = Modifier.height(20.dp),
+            strokeWidth = 2.dp,
+            color = MaterialTheme.colorScheme.onPrimary,
+        )
+    } else {
+        Text(stringResource(label))
+    }
+}
+
+@Composable
+private fun CameraError(message: String) {
+    Text(message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
 }

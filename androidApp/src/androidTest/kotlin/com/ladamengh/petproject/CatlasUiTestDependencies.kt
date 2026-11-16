@@ -39,7 +39,18 @@ object CatlasUiTestDependencies {
             MockResponse()
                 .setHeader("Content-Type", "application/json")
                 .setBody(
-                    """[{"id":101,"name":"Луна","breed":"Сибирская","location":"Казань","description":"Спокойная кошка ищет дом","image_url":""}]""",
+                    """
+                    [
+                      {
+                        "id": 101,
+                        "name": "Луна",
+                        "breed": "Сибирская",
+                        "location": "Казань",
+                        "description": "Спокойная кошка ищет дом",
+                        "image_url": ""
+                      }
+                    ]
+                    """.trimIndent(),
                 ),
         )
 

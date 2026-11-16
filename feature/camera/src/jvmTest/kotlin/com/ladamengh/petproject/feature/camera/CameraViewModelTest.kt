@@ -3,6 +3,7 @@
 package com.ladamengh.petproject.feature.camera
 
 import com.ladamengh.petproject.domain.repository.CatRepository
+import com.ladamengh.petproject.domain.repository.CatRepositoryException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
@@ -14,6 +15,7 @@ import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Test
+import java.io.IOException
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
@@ -102,7 +104,7 @@ class CameraViewModelTest {
     fun publishFailureKeepsDraftAndShowsRepositoryMessage() = runViewModelTest {
         // Arrange
         whenever(catRepository.publishCat(any(), any(), any(), any(), any()))
-            .thenThrow(IllegalStateException("Сеть недоступна"))
+            .thenThrow(CatRepositoryException.RequestFailed(IOException("Сеть недоступна")))
         val viewModel = CameraViewModel(catRepository)
         val imageBytes = byteArrayOf(7)
         viewModel.onIntent(CameraIntent.PhotoCaptured(imageBytes))

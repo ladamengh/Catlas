@@ -52,7 +52,7 @@ data class LocalProfileEntity(
 }
 
 @Dao
-interface CatlasDao {
+interface FavoriteCatDao {
     @Query("SELECT * FROM favorite_cats ORDER BY catId")
     fun observeFavoriteCats(): Flow<List<FavoriteCatEntity>>
 
@@ -65,6 +65,10 @@ interface CatlasDao {
     @Query("DELETE FROM favorite_cats WHERE catId = :catId")
     suspend fun removeFavoriteCat(catId: Int)
 
+}
+
+@Dao
+interface FavoriteBreedDao {
     @Query("SELECT breed FROM favorite_breeds ORDER BY breed")
     fun observeFavoriteBreeds(): Flow<List<String>>
 
@@ -77,6 +81,10 @@ interface CatlasDao {
     @Query("DELETE FROM favorite_breeds WHERE breed = :breed")
     suspend fun removeFavoriteBreed(breed: String)
 
+}
+
+@Dao
+interface ProfileDao {
     @Query("SELECT * FROM local_profile WHERE key = :key LIMIT 1")
     fun observeProfile(key: Int = LocalProfileEntity.PROFILE_KEY): Flow<LocalProfileEntity?>
 
@@ -89,6 +97,10 @@ interface CatlasDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun createProfileIfMissing(profile: LocalProfileEntity)
 
+}
+
+@Dao
+interface SubmittedCatDao {
     @Query("SELECT * FROM submitted_cats ORDER BY createdAtEpochMillis DESC")
     fun observeSubmittedCats(): Flow<List<SubmittedCatEntity>>
 
@@ -98,6 +110,10 @@ interface CatlasDao {
     @Query("DELETE FROM submitted_cats WHERE imageId = :imageId")
     suspend fun removeSubmittedCat(imageId: String)
 
+}
+
+@Dao
+interface CatDao {
     @Query("SELECT * FROM cats ORDER BY id DESC")
     fun observeCats(): Flow<List<CatEntity>>
 
@@ -136,7 +152,11 @@ data class CatEntity(
 )
 @ConstructedBy(CatlasDatabaseConstructor::class)
 abstract class CatlasDatabase : RoomDatabase() {
-    abstract fun dao(): CatlasDao
+    abstract fun favoriteCatDao(): FavoriteCatDao
+    abstract fun favoriteBreedDao(): FavoriteBreedDao
+    abstract fun profileDao(): ProfileDao
+    abstract fun submittedCatDao(): SubmittedCatDao
+    abstract fun catDao(): CatDao
 }
 
 @Suppress("KotlinNoActualForExpect")

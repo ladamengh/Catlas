@@ -48,39 +48,41 @@ class CatlasDatabaseIntegrationTest {
     @Test
     fun feedAndFavoritesPersistAndEmitOrderedUpdates() = runBlocking {
         // Arrange
-        val dao = database.dao()
+        val catDao = database.catDao()
+        val favoriteCatDao = database.favoriteCatDao()
+        val favoriteBreedDao = database.favoriteBreedDao()
 
         // Act
-        dao.saveCats(
+        catDao.saveCats(
             listOf(
                 CatEntity(2, "Мурка", "Сиамская", "Казань", "Любопытная", "cat-2.jpg"),
                 CatEntity(1, "Барсик", "Мейн-кун", "Москва", "Спокойный", "cat-1.jpg"),
             ),
         )
-        dao.saveFavoriteCat(FavoriteCatEntity(2, "Мурка", "Сиамская", "Казань", "Любопытная"))
-        dao.saveFavoriteBreed(FavoriteBreedEntity("Сиамская"))
+        favoriteCatDao.saveFavoriteCat(FavoriteCatEntity(2, "Мурка", "Сиамская", "Казань", "Любопытная"))
+        favoriteBreedDao.saveFavoriteBreed(FavoriteBreedEntity("Сиамская"))
 
         // Assert
-        assertEquals(listOf(2, 1), dao.observeCats().first().map { it.id })
-        assertEquals(listOf(2), dao.observeFavoriteCats().first().map { it.catId })
-        assertEquals(listOf("Сиамская"), dao.observeFavoriteBreeds().first())
+        assertEquals(listOf(2, 1), catDao.observeCats().first().map { it.id })
+        assertEquals(listOf(2), favoriteCatDao.observeFavoriteCats().first().map { it.catId })
+        assertEquals(listOf("Сиамская"), favoriteBreedDao.observeFavoriteBreeds().first())
 
         // Act
-        dao.removeFavoriteCat(2)
+        favoriteCatDao.removeFavoriteCat(2)
 
         // Assert
-        assertEquals(emptyList<Int>(), dao.observeFavoriteCats().first().map { it.catId })
+        assertEquals(emptyList<Int>(), favoriteCatDao.observeFavoriteCats().first().map { it.catId })
     }
 
     @Test
     fun profilePersistsNullableFieldsAndAvatarBytes() = runBlocking {
         // Arrange
-        val dao = database.dao()
+        val profileDao = database.profileDao()
         val avatar = byteArrayOf(0, 1, -1)
 
         // Act
-        dao.createProfileIfMissing(LocalProfileEntity(localId = "local-1", displayName = "Анна"))
-        dao.saveProfile(
+        profileDao.createProfileIfMissing(LocalProfileEntity(localId = "local-1", displayName = "Анна"))
+        profileDao.saveProfile(
             LocalProfileEntity(
                 localId = "local-1",
                 displayName = "Анна",
@@ -90,7 +92,7 @@ class CatlasDatabaseIntegrationTest {
             ),
         )
 
-        val profile = requireNotNull(dao.observeProfile().first())
+        val profile = requireNotNull(profileDao.observeProfile().first())
 
         // Assert
         assertEquals("Анна", profile.displayName)
@@ -119,7 +121,7 @@ class CatlasDatabaseIntegrationTest {
             }
 
             val savedProfile = withTimeout(5_000) {
-                database.dao().observeProfile().first { it?.displayName == "Анна" }
+                database.profileDao().observeProfile().first { it?.displayName == "Анна" }
             }
 
             // Assert

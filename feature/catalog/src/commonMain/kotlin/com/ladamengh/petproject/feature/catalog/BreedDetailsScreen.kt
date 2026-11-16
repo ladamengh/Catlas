@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.ladamengh.petproject.domain.model.CatBreed
 import com.ladamengh.petproject.resources.Res
 import com.ladamengh.petproject.resources.breed_about
 import com.ladamengh.petproject.resources.breed_image_description
@@ -30,6 +31,8 @@ import com.ladamengh.petproject.resources.favorite_breed_remove
 import com.ladamengh.petproject.ui.components.DetailsHeader
 import com.ladamengh.petproject.ui.theme.CatlasColors
 import org.jetbrains.compose.resources.stringResource
+
+private const val ARTWORK_VARIANT_COUNT = 3
 
 @Composable
 fun BreedDetailsScreen(
@@ -66,39 +69,34 @@ fun BreedDetailsScreen(
                 onFavoriteClick = onFavoriteClick,
                 imageUrl = breed.imageUrl,
             )
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp)
-                    .padding(top = 24.dp, bottom = 24.dp),
-                verticalArrangement = Arrangement.Top,
-            ) {
-                Text(
-                    text = breed.name,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = CatlasColors.textPrimary,
-                )
-                Spacer(Modifier.height(24.dp))
-                BreedDetailSection(
-                    title = stringResource(Res.string.breed_origin),
-                    value = breed.origin,
-                )
-                Spacer(Modifier.height(20.dp))
-                BreedDetailSection(
-                    title = stringResource(Res.string.breed_temperament),
-                    value = breed.temperament,
-                )
-                Spacer(Modifier.height(20.dp))
-                BreedDetailSection(
-                    title = stringResource(Res.string.breed_about),
-                    value = breed.description,
-                )
-            }
+            BreedDetailsContent(breed)
         }
+    }
+}
+
+@Composable
+private fun androidx.compose.foundation.layout.ColumnScope.BreedDetailsContent(breed: CatBreed) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 24.dp)
+            .padding(top = 24.dp, bottom = 24.dp),
+        verticalArrangement = Arrangement.Top,
+    ) {
+        Text(
+            text = breed.name,
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = CatlasColors.textPrimary,
+        )
+        Spacer(Modifier.height(24.dp))
+        BreedDetailSection(stringResource(Res.string.breed_origin), breed.origin)
+        Spacer(Modifier.height(20.dp))
+        BreedDetailSection(stringResource(Res.string.breed_temperament), breed.temperament)
+        Spacer(Modifier.height(20.dp))
+        BreedDetailSection(stringResource(Res.string.breed_about), breed.description)
     }
 }
 
@@ -121,7 +119,7 @@ private fun BreedDetailSection(
     )
 }
 
-private fun String.artworkBackgroundColor() = when (hashCode().mod(3)) {
+private fun String.artworkBackgroundColor() = when (hashCode().mod(ARTWORK_VARIANT_COUNT)) {
     0 -> CatlasColors.artworkPeach
     1 -> CatlasColors.artworkSage
     else -> CatlasColors.artworkLilac

@@ -56,42 +56,8 @@ fun HomeFeedScreen(
         ),
         verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
-        item {
-            Column(modifier = Modifier.padding(bottom = 2.dp)) {
-                Text(
-                    text = stringResource(Res.string.home_title),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = CatlasColors.textPrimary,
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = stringResource(Res.string.home_subtitle),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = CatlasColors.textSecondary,
-                )
-            }
-        }
-        if (state.hasError) {
-            item {
-                Button(
-                    onClick = { onIntent(HomeFeedIntent.Retry) },
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(stringResource(Res.string.home_feed_load_error))
-                }
-            }
-        }
-        if (state.cats.isEmpty() && !state.hasError) {
-            item {
-                Text(
-                    text = stringResource(Res.string.home_feed_empty),
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 48.dp),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = CatlasColors.textSecondary,
-                )
-            }
-        }
+        item { HomeFeedHeader() }
+        item { HomeFeedStatus(state, onIntent) }
         items(state.cats, key = Cat::id) { cat ->
             CatPostCard(
                 cat = cat,
@@ -101,5 +67,41 @@ fun HomeFeedScreen(
                 modifier = Modifier.padding(bottom = 2.dp),
             )
         }
+    }
+}
+
+@Composable
+private fun HomeFeedHeader() {
+    Column(modifier = Modifier.padding(bottom = 2.dp)) {
+        Text(
+            text = stringResource(Res.string.home_title),
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = CatlasColors.textPrimary,
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = stringResource(Res.string.home_subtitle),
+            style = MaterialTheme.typography.bodyMedium,
+            color = CatlasColors.textSecondary,
+        )
+    }
+}
+
+@Composable
+private fun HomeFeedStatus(state: HomeFeedState, onIntent: (HomeFeedIntent) -> Unit) {
+    when {
+        state.hasError -> Button(
+            onClick = { onIntent(HomeFeedIntent.Retry) },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(stringResource(Res.string.home_feed_load_error))
+        }
+        state.cats.isEmpty() -> Text(
+            text = stringResource(Res.string.home_feed_empty),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 48.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            color = CatlasColors.textSecondary,
+        )
     }
 }

@@ -1,6 +1,7 @@
 package com.ladamengh.petproject.feature.home
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -63,76 +64,79 @@ fun CatDetailsScreen(
                 imageUrl = cat.imageUrl,
             )
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(horizontal = 24.dp)
-                    .padding(top = 24.dp, bottom = 16.dp),
-            ) {
-                Text(
-                    text = cat.name,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = CatlasColors.textPrimary,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = cat.breed,
-                        modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = CatlasColors.textTertiary,
-                    )
-                    IconButton(onClick = onBreedFavoriteClick) {
-                        Icon(
-                            imageVector = if (isBreedFavorite) {
-                                Icons.Filled.Favorite
-                            } else {
-                                Icons.Filled.FavoriteBorder
-                            },
-                            contentDescription = stringResource(
-                                if (isBreedFavorite) {
-                                    Res.string.favorite_breed_remove
-                                } else {
-                                    Res.string.favorite_breed_add
-                                },
-                            ),
-                            tint = if (isBreedFavorite) {
-                                CatlasColors.favorite
-                            } else {
-                                CatlasColors.favoriteInactive
-                            },
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = cat.location.ifBlank { stringResource(Res.string.cat_location_unknown) },
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = CatlasColors.textSecondary,
-                )
-                Spacer(modifier = Modifier.height(20.dp))
-                Text(
-                    text = stringResource(Res.string.cat_about),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    color = CatlasColors.textPrimary,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = cat.description,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .verticalScroll(rememberScrollState()),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = CatlasColors.textBody,
-                )
-            }
+            CatDetailsContent(cat, isBreedFavorite, onBreedFavoriteClick)
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.CatDetailsContent(
+    cat: Cat,
+    isBreedFavorite: Boolean,
+    onBreedFavoriteClick: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f)
+            .padding(horizontal = 24.dp)
+            .padding(top = 24.dp, bottom = 16.dp),
+    ) {
+        Text(
+            text = cat.name,
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = CatlasColors.textPrimary,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        CatBreedRow(cat.breed, isBreedFavorite, onBreedFavoriteClick)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = cat.location.ifBlank { stringResource(Res.string.cat_location_unknown) },
+            style = MaterialTheme.typography.bodyLarge,
+            color = CatlasColors.textSecondary,
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(
+            text = stringResource(Res.string.cat_about),
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.SemiBold,
+            color = CatlasColors.textPrimary,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = cat.description,
+            modifier = Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()),
+            style = MaterialTheme.typography.bodyLarge,
+            color = CatlasColors.textBody,
+        )
+    }
+}
+
+@Composable
+private fun CatBreedRow(
+    breed: String,
+    isFavorite: Boolean,
+    onFavoriteClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = breed,
+            modifier = Modifier.weight(1f),
+            style = MaterialTheme.typography.titleMedium,
+            color = CatlasColors.textTertiary,
+        )
+        IconButton(onClick = onFavoriteClick) {
+            Icon(
+                imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                contentDescription = stringResource(
+                    if (isFavorite) Res.string.favorite_breed_remove else Res.string.favorite_breed_add,
+                ),
+                tint = if (isFavorite) CatlasColors.favorite else CatlasColors.favoriteInactive,
+            )
         }
     }
 }

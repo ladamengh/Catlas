@@ -3,6 +3,7 @@ package com.ladamengh.petproject.feature.catalog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ladamengh.petproject.domain.repository.CatRepository
+import com.ladamengh.petproject.domain.repository.CatRepositoryException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,9 +60,7 @@ class CatalogViewModel(
             try {
                 catRepository.refreshBreeds()
                 _uiState.update { it.copy(isLoading = false) }
-            } catch (cancellation: CancellationException) {
-                throw cancellation
-            } catch (exception: Exception) {
+            } catch (exception: CatRepositoryException) {
                 println("Catlas catalog request failed: ${exception.message}")
                 _uiState.update { it.copy(isLoading = false, hasError = true) }
             }

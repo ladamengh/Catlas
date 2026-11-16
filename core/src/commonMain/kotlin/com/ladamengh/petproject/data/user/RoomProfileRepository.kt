@@ -5,6 +5,7 @@ import com.ladamengh.petproject.data.local.LocalProfileEntity
 import com.ladamengh.petproject.data.local.SubmittedCatEntity
 import com.ladamengh.petproject.domain.model.UserProfile
 import com.ladamengh.petproject.domain.repository.ProfileRepository
+import com.ladamengh.petproject.utils.createRandomHexId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -13,7 +14,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 /** External cat image reference saved after the user submits a cat. */
 data class SubmittedCatRecord(
@@ -29,9 +29,10 @@ class RoomProfileRepository(
     database: CatlasDatabase,
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main),
 ) : ProfileRepository {
-    private val dao = database.dao()
+    private val profileDao = database.profileDao()
+    private val submittedCatDao = database.submittedCatDao()
 
-    override val profile: StateFlow<UserProfile> = dao.observeProfile()
+    override val profile: StateFlow<UserProfile> = profileDao.observeProfile()
         .map { entity ->
             entity?.let {
                 UserProfile(
@@ -61,7 +62,7 @@ class RoomProfileRepository(
             ),
         )
 
-    val submittedCats: StateFlow<List<SubmittedCatRecord>> = dao.observeSubmittedCats()
+    val submittedCats: StateFlow<List<SubmittedCatRecord>> = submittedCatDao.observeSubmittedCats()
         .map { records -> records.map(SubmittedCatEntity::toRecord) }
         .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
@@ -81,8 +82,8 @@ class RoomProfileRepository(
         if (trimmedName.isBlank()) return
         scope.launch {
             ensureProfileExists()
-            val oldProfile = requireNotNull(dao.getProfile())
-            dao.saveProfile(
+            val oldProfile = requireNotNull(profileDao.getProfile())
+            profileDao.saveProfile(
                 LocalProfileEntity(
                     localId = oldProfile.localId,
                     displayName = trimmedName,
@@ -96,7 +97,7 @@ class RoomProfileRepository(
 
     fun saveSubmittedCat(record: SubmittedCatRecord) {
         scope.launch {
-            dao.saveSubmittedCat(
+            submittedCatDao.saveSubmittedCat(
                 SubmittedCatEntity(
                     imageId = record.imageId,
                     imageUrl = record.imageUrl,
@@ -109,11 +110,11 @@ class RoomProfileRepository(
     }
 
     fun removeSubmittedCat(imageId: String) {
-        scope.launch { dao.removeSubmittedCat(imageId) }
+        scope.launch { submittedCatDao.removeSubmittedCat(imageId) }
     }
 
     private suspend fun ensureProfileExists() {
-        dao.createProfileIfMissing(
+        profileDao.createProfileIfMissing(
             LocalProfileEntity(
                 localId = createLocalId(),
                 displayName = DEFAULT_DISPLAY_NAME,
@@ -121,8 +122,7 @@ class RoomProfileRepository(
         )
     }
 
-    private fun createLocalId(): String = Random.nextBytes(16)
-        .joinToString(separator = "") { byte -> byte.toUByte().toString(16).padStart(2, '0') }
+    private fun createLocalId(): String = createRandomHexId()
 
     private companion object {
         const val DEFAULT_DISPLAY_NAME = "Любитель котиков"

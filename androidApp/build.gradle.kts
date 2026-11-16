@@ -10,8 +10,9 @@ detekt {
     buildUponDefaultConfig = true
 }
 
-tasks.withType<dev.detekt.gradle.Detekt>().configureEach {
-    exclude("**/generated/**")
+tasks.named<dev.detekt.gradle.Detekt>("detekt") {
+    setSource(files("src"))
+    include("**/*.kt")
 }
 
 kotlin {

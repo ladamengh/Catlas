@@ -4,6 +4,7 @@ package com.ladamengh.petproject.feature.home
 
 import com.ladamengh.petproject.domain.model.Cat
 import com.ladamengh.petproject.domain.repository.CatRepository
+import com.ladamengh.petproject.domain.repository.CatRepositoryException
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -20,6 +21,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.coroutines.flow.first
 import org.junit.Test
+import java.io.IOException
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -34,7 +36,7 @@ class HomeFeedViewModelTest {
         whenever(catRepository.breeds).thenReturn(MutableStateFlow(emptyList()))
         whenever(catRepository.favoriteCatIds).thenReturn(MutableStateFlow(emptySet()))
         whenever(catRepository.favoriteBreeds).thenReturn(MutableStateFlow(emptySet()))
-        whenever(catRepository.refreshCats()).thenThrow(IllegalStateException("offline"))
+        whenever(catRepository.refreshCats()).thenThrow(CatRepositoryException.RequestFailed(IOException("offline")))
         val viewModel = HomeFeedViewModel(catRepository)
 
         // Act
@@ -55,7 +57,7 @@ class HomeFeedViewModelTest {
         whenever(catRepository.favoriteCatIds).thenReturn(MutableStateFlow(emptySet()))
         whenever(catRepository.favoriteBreeds).thenReturn(MutableStateFlow(emptySet()))
         whenever(catRepository.refreshCats())
-            .thenThrow(IllegalStateException("offline"))
+            .thenThrow(CatRepositoryException.RequestFailed(IOException("offline")))
             .thenReturn(Unit)
         val viewModel = HomeFeedViewModel(catRepository)
 

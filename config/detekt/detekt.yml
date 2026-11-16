@@ -1,3 +1,8 @@
 config:
   validation: true
   warningsAsErrors: false
+
+naming:
+  FunctionNaming:
+    ignoreAnnotated:
+      - Composable

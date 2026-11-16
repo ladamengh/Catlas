@@ -4,6 +4,7 @@ package com.ladamengh.petproject.feature.catalog
 
 import com.ladamengh.petproject.domain.model.CatBreed
 import com.ladamengh.petproject.domain.repository.CatRepository
+import com.ladamengh.petproject.domain.repository.CatRepositoryException
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +16,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Test
+import java.io.IOException
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -27,8 +29,20 @@ class CatalogViewModelTest {
         // Arrange
         val breeds = MutableStateFlow(
             listOf(
-                CatBreed(id = "b", name = "Сиамская", origin = "Таиланд", temperament = "Общительная", description = ""),
-                CatBreed(id = "a", name = "Абиссинская", origin = "Эфиопия", temperament = "Активная", description = ""),
+                CatBreed(
+                    id = "b",
+                    name = "Сиамская",
+                    origin = "Таиланд",
+                    temperament = "Общительная",
+                    description = "",
+                ),
+                CatBreed(
+                    id = "a",
+                    name = "Абиссинская",
+                    origin = "Эфиопия",
+                    temperament = "Активная",
+                    description = "",
+                ),
             ),
         )
         whenever(catRepository.breeds).thenReturn(breeds)
@@ -54,7 +68,7 @@ class CatalogViewModelTest {
         whenever(catRepository.favoriteCatIds).thenReturn(MutableStateFlow(emptySet()))
         whenever(catRepository.favoriteBreeds).thenReturn(MutableStateFlow(emptySet()))
         whenever(catRepository.refreshBreeds())
-            .thenThrow(IllegalStateException("service unavailable"))
+            .thenThrow(CatRepositoryException.RequestFailed(IOException("service unavailable")))
             .thenReturn(Unit)
         val viewModel = CatalogViewModel(catRepository)
 

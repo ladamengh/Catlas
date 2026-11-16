@@ -10,7 +10,7 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
-import kotlin.random.Random
+import com.ladamengh.petproject.utils.createRandomHexId
 
 class SupabaseCatsService(
     private val httpClient: HttpClient,
@@ -67,6 +67,5 @@ class SupabaseCatsService(
         header(HttpHeaders.Accept, ContentType.Application.Json)
     }
 
-    private fun randomPath(): String = Random.nextBytes(16)
-        .joinToString(separator = "") { byte -> byte.toUByte().toString(16).padStart(2, '0') }
+    private fun randomPath(): String = createRandomHexId()
 }

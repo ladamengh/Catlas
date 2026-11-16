@@ -3,7 +3,7 @@ package com.ladamengh.petproject.feature.camera
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ladamengh.petproject.domain.repository.CatRepository
-import kotlinx.coroutines.CancellationException
+import com.ladamengh.petproject.domain.repository.CatRepositoryException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -55,9 +55,7 @@ class CameraViewModel(
                 )
                 _uiState.value = CameraState()
                 effectChannel.send(CameraEffect.CatPublished)
-            } catch (cancellation: CancellationException) {
-                throw cancellation
-            } catch (exception: Exception) {
+            } catch (exception: CatRepositoryException) {
                 _uiState.update {
                     it.copy(
                         isSaving = false,

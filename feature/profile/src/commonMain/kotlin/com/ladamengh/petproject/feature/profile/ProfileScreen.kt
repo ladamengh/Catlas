@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.ladamengh.petproject.domain.model.UserProfile
 import com.ladamengh.petproject.ui.theme.CatlasColors
 
 @Composable
@@ -45,34 +46,7 @@ fun ProfileScreen(
             .padding(horizontal = 20.dp, vertical = 18.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = "Профиль",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = CatlasColors.textPrimary,
-            )
-            TextButton(
-                onClick = { onIntent(ProfileIntent.EditOrSave) },
-                enabled = !state.isEditing || state.draftName.isNotBlank(),
-            ) {
-                if (state.isEditing) {
-                    Text("Сохранить")
-                } else {
-                    Icon(
-                        imageVector = Icons.Outlined.Edit,
-                        contentDescription = null,
-                        modifier = Modifier.padding(end = 6.dp),
-                    )
-                    Text("Редактировать")
-                }
-            }
-        }
-
+        ProfileHeader(state, onIntent)
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -83,74 +57,101 @@ fun ProfileScreen(
                 isEditing = state.isEditing,
                 onClick = { onIntent(ProfileIntent.PickAvatar) },
             )
+            if (state.isEditing) ProfileEditor(state, onIntent) else ProfileSummary(state.profile)
+        }
+    }
+}
 
+@Composable
+private fun ProfileHeader(state: ProfileState, onIntent: (ProfileIntent) -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "Профиль",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = CatlasColors.textPrimary,
+        )
+        TextButton(
+            onClick = { onIntent(ProfileIntent.EditOrSave) },
+            enabled = !state.isEditing || state.draftName.isNotBlank(),
+        ) {
             if (state.isEditing) {
-                Text(
-                    text = "Нажмите на фото, чтобы изменить",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = CatlasColors.textSecondary,
-                )
-                OutlinedTextField(
-                    value = state.draftName,
-                    onValueChange = { onIntent(ProfileIntent.ChangeName(it)) },
-                    label = { Text("Имя") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                OutlinedTextField(
-                    value = state.draftCity,
-                    onValueChange = { onIntent(ProfileIntent.ChangeCity(it)) },
-                    label = { Text("Город (необязательно)") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                OutlinedTextField(
-                    value = state.draftDescription,
-                    onValueChange = { onIntent(ProfileIntent.ChangeDescription(it)) },
-                    label = { Text("О себе (необязательно)") },
-                    minLines = 3,
-                    maxLines = 5,
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                Text("Сохранить")
             } else {
-                Text(
-                    text = state.profile.displayName,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.SemiBold,
-                    color = CatlasColors.textPrimary,
-                    textAlign = TextAlign.Center,
-                )
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.LocationOn,
-                        contentDescription = null,
-                        tint = CatlasColors.textSecondary,
-                        modifier = Modifier.size(18.dp),
-                    )
-                    Text(
-                        text = state.profile.city
-                            ?.takeIf(String::isNotBlank)
-                            ?.let { "Город: $it" }
-                            ?: "Город: не выбран",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = CatlasColors.textSecondary,
-                    )
-                }
-                state.profile.description
-                    ?.takeIf(String::isNotBlank)
-                    ?.let { description ->
-                        Text(
-                            text = description,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = CatlasColors.textSecondary,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
+                Icon(Icons.Outlined.Edit, contentDescription = null, modifier = Modifier.padding(end = 6.dp))
+                Text("Редактировать")
             }
         }
+    }
+}
+
+@Composable
+private fun ProfileEditor(state: ProfileState, onIntent: (ProfileIntent) -> Unit) {
+    Text(
+        text = "Нажмите на фото, чтобы изменить",
+        style = MaterialTheme.typography.bodySmall,
+        color = CatlasColors.textSecondary,
+    )
+    OutlinedTextField(
+        value = state.draftName,
+        onValueChange = { onIntent(ProfileIntent.ChangeName(it)) },
+        label = { Text("Имя") },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth(),
+    )
+    OutlinedTextField(
+        value = state.draftCity,
+        onValueChange = { onIntent(ProfileIntent.ChangeCity(it)) },
+        label = { Text("Город (необязательно)") },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth(),
+    )
+    OutlinedTextField(
+        value = state.draftDescription,
+        onValueChange = { onIntent(ProfileIntent.ChangeDescription(it)) },
+        label = { Text("О себе (необязательно)") },
+        minLines = 3,
+        maxLines = 5,
+        modifier = Modifier.fillMaxWidth(),
+    )
+}
+
+@Composable
+private fun ProfileSummary(profile: UserProfile) {
+    Text(
+        text = profile.displayName,
+        style = MaterialTheme.typography.headlineSmall,
+        fontWeight = FontWeight.SemiBold,
+        color = CatlasColors.textPrimary,
+        textAlign = TextAlign.Center,
+    )
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.LocationOn,
+            contentDescription = null,
+            tint = CatlasColors.textSecondary,
+            modifier = Modifier.size(18.dp),
+        )
+        Text(
+            text = profile.city?.takeIf(String::isNotBlank)?.let { "Город: $it" } ?: "Город: не выбран",
+            style = MaterialTheme.typography.bodyMedium,
+            color = CatlasColors.textSecondary,
+        )
+    }
+    profile.description?.takeIf(String::isNotBlank)?.let { description ->
+        Text(
+            text = description,
+            style = MaterialTheme.typography.bodyLarge,
+            color = CatlasColors.textSecondary,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 

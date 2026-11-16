@@ -7,6 +7,10 @@ import com.ladamengh.petproject.data.local.FavoriteCatEntity
 import com.ladamengh.petproject.domain.model.CatBreed
 import com.ladamengh.petproject.domain.model.Cat
 import com.ladamengh.petproject.domain.repository.CatRepository
+import com.ladamengh.petproject.domain.repository.CatRepositoryException
+import io.ktor.client.plugins.ResponseException
+import kotlinx.serialization.SerializationException
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -17,37 +21,41 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.io.IOException
 
 /** Uses Supabase for breeds and Room for favourites. */
 class RoomCatRepository(
     database: CatlasDatabase,
     private val remoteDataSource: SupabaseCatDataSource,
 ) : CatRepository {
-    private val dao = database.dao()
+    private val catDao = database.catDao()
+    private val favoriteCatDao = database.favoriteCatDao()
+    private val favoriteBreedDao = database.favoriteBreedDao()
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
-    override val cats: StateFlow<List<Cat>> = dao.observeCats()
+    override val cats: StateFlow<List<Cat>> = catDao.observeCats()
         .map { entities -> entities.map(CatEntity::toDomain) }
         .stateIn(scope, SharingStarted.Eagerly, emptyList())
     private val _breeds = MutableStateFlow(emptyList<CatBreed>())
     override val breeds = _breeds
 
-    override val favoriteCatIds: StateFlow<Set<Int>> = dao.observeFavoriteCats()
+    override val favoriteCatIds: StateFlow<Set<Int>> = favoriteCatDao.observeFavoriteCats()
         .map { savedCats -> savedCats.map(FavoriteCatEntity::catId).toSet() }
         .stateIn(scope, SharingStarted.Eagerly, emptySet())
 
-    override val favoriteBreeds: StateFlow<Set<String>> = dao.observeFavoriteBreeds()
+    override val favoriteBreeds: StateFlow<Set<String>> = favoriteBreedDao.observeFavoriteBreeds()
         .map { it.toSet() }
         .stateIn(scope, SharingStarted.Eagerly, emptySet())
 
     override suspend fun refreshBreeds() {
-        val breeds = remoteDataSource.fetchBreeds()
-        if (breeds.isEmpty()) error("Supabase returned no breeds.")
+        val breeds = requestFromService { remoteDataSource.fetchBreeds() }
+        if (breeds.isEmpty()) throw CatRepositoryException.NoBreedsAvailable()
         _breeds.value = breeds
     }
 
     override suspend fun refreshCats() {
-        dao.saveCats(remoteDataSource.fetchCats().map { cat ->
+        val cats = requestFromService { remoteDataSource.fetchCats() }
+        catDao.saveCats(cats.map { cat ->
             CatEntity(
                 id = cat.id,
                 name = cat.name,
@@ -66,8 +74,10 @@ class RoomCatRepository(
         description: String,
         image: ByteArray,
     ) {
-        val cat = remoteDataSource.publishCat(name, breed, location, description, image)
-        dao.saveCat(
+        val cat = requestFromService {
+            remoteDataSource.publishCat(name, breed, location, description, image)
+        }
+        catDao.saveCat(
             CatEntity(
                 id = cat.id,
                 name = cat.name,
@@ -81,11 +91,11 @@ class RoomCatRepository(
 
     override fun toggleFavoriteCat(catId: Int) {
         scope.launch {
-            if (dao.getFavoriteCat(catId) != null) {
-                dao.removeFavoriteCat(catId)
+            if (favoriteCatDao.getFavoriteCat(catId) != null) {
+                favoriteCatDao.removeFavoriteCat(catId)
             } else {
                 cats.value.firstOrNull { it.id == catId }?.let { cat ->
-                    dao.saveFavoriteCat(
+                    favoriteCatDao.saveFavoriteCat(
                         FavoriteCatEntity(
                             catId = cat.id,
                             name = cat.name,
@@ -102,10 +112,10 @@ class RoomCatRepository(
 
     override fun toggleFavoriteBreed(breed: String) {
         scope.launch {
-            if (dao.getFavoriteBreed(breed) != null) {
-                dao.removeFavoriteBreed(breed)
+            if (favoriteBreedDao.getFavoriteBreed(breed) != null) {
+                favoriteBreedDao.removeFavoriteBreed(breed)
             } else {
-                dao.saveFavoriteBreed(FavoriteBreedEntity(breed))
+                favoriteBreedDao.saveFavoriteBreed(FavoriteBreedEntity(breed))
             }
         }
     }
@@ -113,6 +123,18 @@ class RoomCatRepository(
     fun close() {
         scope.cancel()
     }
+}
+
+private suspend inline fun <T> requestFromService(crossinline request: suspend () -> T): T = try {
+    request()
+} catch (cancellation: CancellationException) {
+    throw cancellation
+} catch (exception: IOException) {
+    throw CatRepositoryException.RequestFailed(exception)
+} catch (exception: ResponseException) {
+    throw CatRepositoryException.RequestFailed(exception)
+} catch (exception: SerializationException) {
+    throw CatRepositoryException.RequestFailed(exception)
 }
 
 private fun CatEntity.toDomain() = Cat(

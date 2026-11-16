@@ -58,85 +58,104 @@ fun CatPostCard(
         shadowElevation = 3.dp,
     ) {
         Column {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(224.dp)
-                    .background(cat.artworkBackgroundColor()),
-                contentAlignment = Alignment.Center,
-            ) {
-                if (!cat.imageUrl.isNullOrBlank()) {
-                    AsyncImage(
-                        model = cat.imageUrl,
-                        contentDescription = stringResource(Res.string.cat_image_description, cat.name),
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxWidth().height(224.dp),
-                    )
-                } else {
-                    Surface(
-                        modifier = Modifier.size(148.dp),
-                        shape = CircleShape,
-                        color = CatlasColors.artworkOverlay,
-                    ) {
-                        Icon(
-                            painter = painterResource(Res.drawable.ic_cat),
-                            contentDescription = stringResource(Res.string.cat_image_description, cat.name),
-                            modifier = Modifier.padding(27.dp),
-                            tint = CatlasColors.artworkInk,
-                        )
-                    }
-                }
-                IconButton(
-                    onClick = onFavoriteClick,
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(12.dp)
-                        .clip(CircleShape)
-                        .background(CatlasColors.cardSurface),
-                ) {
-                    Icon(
-                        imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                        contentDescription = stringResource(
-                            if (isFavorite) Res.string.favorite_remove else Res.string.favorite_add,
-                        ),
-                        tint = if (isFavorite) CatlasColors.favorite else CatlasColors.favoriteInactive,
-                    )
-                }
-            }
-
-            Column(modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text(
-                        text = cat.name,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.SemiBold,
-                        color = CatlasColors.textPrimary,
-                    )
-                    Text(
-                        text = cat.location.ifBlank { stringResource(Res.string.cat_location_unknown) },
-                        style = MaterialTheme.typography.labelLarge,
-                        color = CatlasColors.textSecondary,
-                    )
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = cat.breed,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = CatlasColors.textTertiary,
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = cat.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = CatlasColors.textBody,
-                    maxLines = 2,
-                )
-            }
+            CatPostImage(cat, isFavorite, onFavoriteClick)
+            CatPostDetails(cat)
         }
+    }
+}
+
+@Composable
+private fun CatPostImage(
+    cat: Cat,
+    isFavorite: Boolean,
+    onFavoriteClick: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(224.dp)
+            .background(cat.artworkBackgroundColor()),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (!cat.imageUrl.isNullOrBlank()) {
+            AsyncImage(
+                model = cat.imageUrl,
+                contentDescription = stringResource(Res.string.cat_image_description, cat.name),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxWidth().height(224.dp),
+            )
+        } else {
+            CatArtworkPlaceholder(cat.name)
+        }
+        FavoriteButton(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(12.dp)
+                .clip(CircleShape)
+                .background(CatlasColors.cardSurface),
+            isFavorite = isFavorite,
+            onClick = onFavoriteClick,
+        )
+    }
+}
+
+@Composable
+private fun CatArtworkPlaceholder(catName: String) {
+    Surface(
+        modifier = Modifier.size(148.dp),
+        shape = CircleShape,
+        color = CatlasColors.artworkOverlay,
+    ) {
+        Icon(
+            painter = painterResource(Res.drawable.ic_cat),
+            contentDescription = stringResource(Res.string.cat_image_description, catName),
+            modifier = Modifier.padding(27.dp),
+            tint = CatlasColors.artworkInk,
+        )
+    }
+}
+
+@Composable
+private fun FavoriteButton(
+    modifier: Modifier,
+    isFavorite: Boolean,
+    onClick: () -> Unit,
+) {
+    IconButton(onClick = onClick, modifier = modifier) {
+        Icon(
+            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+            contentDescription = stringResource(
+                if (isFavorite) Res.string.favorite_remove else Res.string.favorite_add,
+            ),
+            tint = if (isFavorite) CatlasColors.favorite else CatlasColors.favoriteInactive,
+        )
+    }
+}
+
+@Composable
+private fun CatPostDetails(cat: Cat) {
+    Column(modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = cat.name,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = CatlasColors.textPrimary,
+            )
+            Text(
+                text = cat.location.ifBlank { stringResource(Res.string.cat_location_unknown) },
+                style = MaterialTheme.typography.labelLarge,
+                color = CatlasColors.textSecondary,
+            )
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(cat.breed, style = MaterialTheme.typography.bodyMedium, color = CatlasColors.textTertiary)
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(cat.description, style = MaterialTheme.typography.bodyMedium, color = CatlasColors.textBody, maxLines = 2)
     }
 }
 

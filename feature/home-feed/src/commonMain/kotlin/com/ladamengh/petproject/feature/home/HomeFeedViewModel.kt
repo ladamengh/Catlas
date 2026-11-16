@@ -3,6 +3,7 @@ package com.ladamengh.petproject.feature.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ladamengh.petproject.domain.repository.CatRepository
+import com.ladamengh.petproject.domain.repository.CatRepositoryException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,9 +48,7 @@ class HomeFeedViewModel(
             try {
                 catRepository.refreshCats()
                 _uiState.value = _uiState.value.copy(isLoading = false)
-            } catch (cancellation: CancellationException) {
-                throw cancellation
-            } catch (exception: Exception) {
+            } catch (exception: CatRepositoryException) {
                 println("Catlas home feed request failed: ${exception.message}")
                 _uiState.value = _uiState.value.copy(isLoading = false, hasError = true)
             }

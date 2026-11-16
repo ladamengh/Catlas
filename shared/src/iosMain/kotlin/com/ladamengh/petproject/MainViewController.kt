@@ -12,6 +12,7 @@ private val iosKoinApplication: KoinApplication by lazy {
     }
 }
 
+@Suppress("FunctionNaming") // Swift uses this exported symbol as the iOS app entry point.
 fun MainViewController() = ComposeUIViewController {
     App(iosKoinApplication)
 }

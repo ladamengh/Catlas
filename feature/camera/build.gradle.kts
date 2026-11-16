@@ -5,6 +5,17 @@ plugins {
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.detekt)
+}
+
+detekt {
+    config.setFrom(rootProject.file("config/detekt/detekt.yml"))
+    buildUponDefaultConfig = true
+}
+
+tasks.named<dev.detekt.gradle.Detekt>("detekt") {
+    setSource(files("src"))
+    include("**/*.kt")
 }
 
 kotlin {

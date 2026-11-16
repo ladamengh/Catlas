@@ -49,6 +49,8 @@ import com.ladamengh.petproject.ui.theme.CatlasColors
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
+private const val ARTWORK_VARIANT_COUNT = 3
+
 @Composable
 fun CatalogScreen(
     state: CatalogState,
@@ -135,57 +137,7 @@ private fun BreedCard(
         shadowElevation = 2.dp,
     ) {
         Column {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(148.dp)
-                    .background(breed.id.artworkBackgroundColor()),
-                contentAlignment = Alignment.Center,
-            ) {
-                if (!breed.imageUrl.isNullOrBlank()) {
-                    AsyncImage(
-                        model = breed.imageUrl,
-                        contentDescription = stringResource(Res.string.breed_image_description, breed.name),
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                } else {
-                    Surface(
-                        modifier = Modifier.size(92.dp),
-                        shape = CircleShape,
-                        color = CatlasColors.artworkOverlay,
-                    ) {
-                        Icon(
-                            painter = painterResource(Res.drawable.ic_cat),
-                            contentDescription = null,
-                            modifier = Modifier.padding(18.dp),
-                            tint = CatlasColors.artworkInk,
-                        )
-                    }
-                }
-                IconButton(
-                    onClick = onFavoriteClick,
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(8.dp)
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(CatlasColors.cardSurface),
-                ) {
-                    Icon(
-                        imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                        contentDescription = stringResource(
-                            if (isFavorite) {
-                                Res.string.favorite_breed_remove
-                            } else {
-                                Res.string.favorite_breed_add
-                            },
-                        ),
-                        modifier = Modifier.size(20.dp),
-                        tint = if (isFavorite) CatlasColors.favorite else CatlasColors.favoriteInactive,
-                    )
-                }
-            }
+            BreedArtwork(breed, isFavorite, onFavoriteClick)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -207,7 +159,75 @@ private fun BreedCard(
 }
 
 @Composable
-private fun String.artworkBackgroundColor() = when (hashCode().mod(3)) {
+private fun BreedArtwork(
+    breed: CatBreed,
+    isFavorite: Boolean,
+    onFavoriteClick: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(148.dp)
+            .background(breed.id.artworkBackgroundColor()),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (!breed.imageUrl.isNullOrBlank()) {
+            AsyncImage(
+                model = breed.imageUrl,
+                contentDescription = stringResource(Res.string.breed_image_description, breed.name),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+            )
+        } else {
+            BreedPlaceholder()
+        }
+        BreedFavoriteButton(isFavorite, onFavoriteClick)
+    }
+}
+
+@Composable
+private fun BreedPlaceholder() {
+    Surface(
+        modifier = Modifier.size(92.dp),
+        shape = CircleShape,
+        color = CatlasColors.artworkOverlay,
+    ) {
+        Icon(
+            painter = painterResource(Res.drawable.ic_cat),
+            contentDescription = null,
+            modifier = Modifier.padding(18.dp),
+            tint = CatlasColors.artworkInk,
+        )
+    }
+}
+
+@Composable
+private fun androidx.compose.foundation.layout.BoxScope.BreedFavoriteButton(
+    isFavorite: Boolean,
+    onClick: () -> Unit,
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier
+            .align(Alignment.TopEnd)
+            .padding(8.dp)
+            .size(36.dp)
+            .clip(CircleShape)
+            .background(CatlasColors.cardSurface),
+    ) {
+        Icon(
+            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+            contentDescription = stringResource(
+                if (isFavorite) Res.string.favorite_breed_remove else Res.string.favorite_breed_add,
+            ),
+            modifier = Modifier.size(20.dp),
+            tint = if (isFavorite) CatlasColors.favorite else CatlasColors.favoriteInactive,
+        )
+    }
+}
+
+@Composable
+private fun String.artworkBackgroundColor() = when (hashCode().mod(ARTWORK_VARIANT_COUNT)) {
     0 -> CatlasColors.artworkPeach
     1 -> CatlasColors.artworkSage
     else -> CatlasColors.artworkLilac
