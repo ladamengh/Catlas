@@ -12,8 +12,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.savedstate.read
-import com.ladamengh.petproject.data.local.CatlasDatabase
-import com.ladamengh.petproject.di.appModule
 import com.ladamengh.petproject.feature.catalog.BreedDetailsRoute
 import com.ladamengh.petproject.feature.catalog.CatalogRoute
 import com.ladamengh.petproject.feature.camera.CameraRoute
@@ -25,14 +23,12 @@ import com.ladamengh.petproject.feature.navigation.AppTab
 import com.ladamengh.petproject.feature.navigation.MainLayout
 import com.ladamengh.petproject.feature.profile.ProfileRoute
 import com.ladamengh.petproject.ui.theme.CatlasColors
-import org.koin.compose.KoinApplication
-import org.koin.dsl.koinConfiguration
+import org.koin.compose.KoinIsolatedContext
+import org.koin.core.KoinApplication
 
 @Composable
-fun CatlasApp(
-    database: CatlasDatabase,
-) {
-    KoinApplication(configuration = koinConfiguration { modules(appModule(database)) }) {
+fun CatlasApp(koinApplication: KoinApplication) {
+    KoinIsolatedContext(koinApplication) {
         val navController = rememberNavController()
 
         MaterialTheme {

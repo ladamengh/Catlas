@@ -15,6 +15,7 @@ kotlinTest = "2.3.21"
 androidxTest = "1.6.2"
 androidxTestExtJunit = "1.2.1"
 androidxTestCore = "1.6.1"
+androidxDrawerLayout = "1.1.1"
 composeTest = "1.11.2"
 mockito = "5.24.0"
 mockitoKotlin = "6.4.0"
@@ -27,6 +28,8 @@ coil = "3.3.0"
 imagePickerKmp = "1.1.7"
 koin = "4.2.2"
 ktor = "3.6.1"
+kaspresso = "1.6.1"
+mockWebServer = "5.5.1"
 
 [libraries]
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
@@ -49,8 +52,14 @@ junit4 = { module = "junit:junit", version.ref = "junit4" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTest" }
 androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidxTestExtJunit" }
 androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTestCore" }
+androidx-drawerlayout = { module = "androidx.drawerlayout:drawerlayout", version.ref = "androidxDrawerLayout" }
 compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "composeTest" }
 compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "composeTest" }
+espresso-core = { module = "androidx.test.espresso:espresso-core", version = "3.6.1" }
+kaspresso = { module = "com.kaspersky.android-components:kaspresso", version.ref = "kaspresso" }
+kaspresso-compose-support = { module = "com.kaspersky.android-components:kaspresso-compose-support", version.ref = "kaspresso" }
+mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mockWebServer" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }

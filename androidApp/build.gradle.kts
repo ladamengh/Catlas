@@ -47,12 +47,22 @@ android {
 
 dependencies {
     implementation(projects.shared)
+    implementation(libs.koin.core)
+    implementation(libs.androidx.drawerlayout)
     implementation(libs.androidx.activity.compose)
     debugImplementation(libs.compose.ui.tooling)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.compose.ui.test.junit4)
+    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.koin.core)
+    androidTestImplementation(libs.kaspresso)
+    androidTestImplementation(libs.kaspresso.compose.support)
+    androidTestImplementation(libs.mockwebserver)
+    androidTestImplementation(libs.ktor.client.okhttp)
+    androidTestImplementation(libs.ktor.client.content.negotiation)
+    androidTestImplementation(libs.ktor.serialization.kotlinx.json)
     androidTestImplementation(libs.room.runtime)
     debugImplementation(libs.compose.ui.test.manifest)
 }

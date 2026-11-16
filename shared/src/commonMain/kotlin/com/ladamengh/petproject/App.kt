@@ -1,12 +1,10 @@
 package com.ladamengh.petproject
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import com.ladamengh.petproject.app.CatlasApp
-import com.ladamengh.petproject.data.local.createCatlasDatabase
+import org.koin.core.KoinApplication
 
 @Composable
-fun App(platformContext: Any? = null) {
-    val database = remember(platformContext) { createCatlasDatabase(platformContext) }
-    CatlasApp(database = database)
+fun App(koinApplication: KoinApplication) {
+    CatlasApp(koinApplication)
 }
