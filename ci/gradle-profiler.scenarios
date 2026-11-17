@@ -1,0 +1,7 @@
+clean_android_debug {
+    title = "Clean Android debug build"
+    tasks = [":androidApp:assembleDebug"]
+    cleanup-tasks = ["clean"]
+    warm-ups = 1
+    iterations = 3
+}
