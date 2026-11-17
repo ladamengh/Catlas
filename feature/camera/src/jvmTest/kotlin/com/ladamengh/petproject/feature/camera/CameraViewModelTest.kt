@@ -108,7 +108,7 @@ class CameraViewModelTest {
     fun publishFailureKeepsDraftAndShowsRepositoryMessage() = runViewModelTest {
         // Arrange
         whenever(catRepository.publishCat(any(), any(), any(), any(), any()))
-            .thenThrow(CatRepositoryException.RequestFailed(IOException("Сеть недоступна")))
+            .thenAnswer { throw CatRepositoryException.RequestFailed(IOException("Сеть недоступна")) }
         val viewModel = CameraViewModel(catRepository)
         val imageBytes = byteArrayOf(7)
         viewModel.onIntent(CameraIntent.PhotoCaptured(imageBytes))
@@ -127,10 +127,11 @@ class CameraViewModelTest {
     }
 }
 
-private fun runViewModelTest(block: suspend TestScope.() -> Unit) = runTest {
-    Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+private fun runViewModelTest(block: suspend TestScope.() -> Unit) {
+    val mainDispatcher = StandardTestDispatcher()
+    Dispatchers.setMain(mainDispatcher)
     try {
-        block()
+        runTest(mainDispatcher) { block() }
     } finally {
         Dispatchers.resetMain()
     }

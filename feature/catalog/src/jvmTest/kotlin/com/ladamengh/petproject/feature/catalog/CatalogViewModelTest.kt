@@ -5,9 +5,9 @@ package com.ladamengh.petproject.feature.catalog
 import com.ladamengh.petproject.domain.model.CatBreed
 import com.ladamengh.petproject.domain.repository.CatRepository
 import com.ladamengh.petproject.domain.repository.CatRepositoryException
+import kotlinx.coroutines.Dispatchers
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -68,7 +68,7 @@ class CatalogViewModelTest {
         whenever(catRepository.favoriteCatIds).thenReturn(MutableStateFlow(emptySet()))
         whenever(catRepository.favoriteBreeds).thenReturn(MutableStateFlow(emptySet()))
         whenever(catRepository.refreshBreeds())
-            .thenThrow(CatRepositoryException.RequestFailed(IOException("service unavailable")))
+            .thenAnswer { throw CatRepositoryException.RequestFailed(IOException("service unavailable")) }
             .thenReturn(Unit)
         val viewModel = CatalogViewModel(catRepository)
 
@@ -85,10 +85,11 @@ class CatalogViewModelTest {
     }
 }
 
-private fun runViewModelTest(block: suspend TestScope.() -> Unit) = runTest {
-    Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+private fun runViewModelTest(block: suspend TestScope.() -> Unit) {
+    val mainDispatcher = StandardTestDispatcher()
+    Dispatchers.setMain(mainDispatcher)
     try {
-        block()
+        runTest(mainDispatcher) { block() }
     } finally {
         Dispatchers.resetMain()
     }

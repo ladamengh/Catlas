@@ -112,10 +112,11 @@ private fun breed(id: String, name: String) = CatBreed(
     description = "",
 )
 
-private fun runViewModelTest(block: suspend TestScope.() -> Unit) = runTest {
-    Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+private fun runViewModelTest(block: suspend TestScope.() -> Unit) {
+    val mainDispatcher = StandardTestDispatcher()
+    Dispatchers.setMain(mainDispatcher)
     try {
-        block()
+        runTest(mainDispatcher) { block() }
     } finally {
         Dispatchers.resetMain()
     }
