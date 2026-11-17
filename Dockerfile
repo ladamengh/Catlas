@@ -21,7 +21,7 @@ RUN mkdir -p "${ANDROID_SDK_ROOT}/cmdline-tools" \
     && yes | sdkmanager --sdk_root="${ANDROID_SDK_ROOT}" --licenses >/dev/null \
     && sdkmanager --sdk_root="${ANDROID_SDK_ROOT}" \
         "platform-tools" \
-        "platforms;android-36"
+        "platforms;android-37"
 
 RUN curl --fail --silent --show-error --location \
         "https://github.com/gradle/gradle-profiler/releases/download/v${GRADLE_PROFILER_VERSION}/gradle-profiler-${GRADLE_PROFILER_VERSION}.zip" \
