@@ -3,6 +3,21 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.detekt)
+    id("com.ladamengh.catlas.play-publisher")
+}
+
+playPublisher {
+    packageName = "com.ladamengh.petproject"
+    artifactPath = "build/outputs/bundle/release/androidApp-release.aab"
+    track = providers.gradleProperty("playTrack").orElse("internal").get()
+    rolloutFraction = providers.gradleProperty("playRolloutFraction").orElse("1.0").get().toDouble()
+    serviceAccountFile = providers.gradleProperty("playServiceAccountFile").orNull
+    releaseNotes("ru-RU", "Улучшена работа приложения и исправлены ошибки.")
+    releaseNotes("en-US", "App improvements and bug fixes.")
+}
+
+tasks.named("publishToGooglePlay") {
+    dependsOn("bundleRelease")
 }
 
 detekt {
