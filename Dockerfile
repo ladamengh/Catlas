@@ -1,6 +1,6 @@
 FROM eclipse-temurin:17-jdk-jammy
 
-ARG ANDROID_CMDLINE_TOOLS_VERSION=11076708
+ARG ANDROID_CMDLINE_TOOLS_VERSION=15859902
 ARG GRADLE_PROFILER_VERSION=0.26.0
 
 ENV ANDROID_SDK_ROOT=/opt/android-sdk \
@@ -19,9 +19,8 @@ RUN mkdir -p "${ANDROID_SDK_ROOT}/cmdline-tools" \
     && mv "${ANDROID_SDK_ROOT}/cmdline-tools/cmdline-tools" "${ANDROID_SDK_ROOT}/cmdline-tools/latest" \
     && rm /tmp/android-command-line-tools.zip \
     && yes | sdkmanager --sdk_root="${ANDROID_SDK_ROOT}" --licenses >/dev/null \
-    && sdkmanager --sdk_root="${ANDROID_SDK_ROOT}" \
-        "platform-tools" \
-        "platforms;android-37"
+    && yes | android --sdk="${ANDROID_SDK_ROOT}" sdk install platform-tools \
+    && yes | android --sdk="${ANDROID_SDK_ROOT}" sdk install --canary platforms/android-37
 
 RUN curl --fail --silent --show-error --location \
         "https://github.com/gradle/gradle-profiler/releases/download/v${GRADLE_PROFILER_VERSION}/gradle-profiler-${GRADLE_PROFILER_VERSION}.zip" \

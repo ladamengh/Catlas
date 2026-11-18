@@ -1,9 +1,8 @@
 pipeline {
-    agent {
-        dockerfile {
-            filename 'Dockerfile'
-            args '-v gradle-cache:/root/.gradle'
-        }
+    agent any
+
+    environment {
+        ANDROID_BUILD_IMAGE = 'catlas-jenkins-agent:local'
     }
 
     triggers {
@@ -19,19 +18,24 @@ pipeline {
     stages {
         stage('Static analysis') {
             steps {
-                sh './gradlew --no-daemon :androidApp:detekt :shared:detekt :core:detekt :feature:home-feed:detekt :feature:catalog:detekt :feature:favorites:detekt :feature:profile:detekt :feature:camera:detekt'
+                sh 'docker run --platform linux/amd64 --rm -v "$WORKSPACE:/workspace" -v gradle-cache:/root/.gradle -w /workspace "$ANDROID_BUILD_IMAGE" ./gradlew --no-daemon :androidApp:detekt :shared:detekt :core:detekt :feature:home-feed:detekt :feature:catalog:detekt :feature:favorites:detekt :feature:profile:detekt :feature:camera:detekt'
             }
         }
 
         stage('Unit tests') {
             steps {
-                sh './gradlew --no-daemon test'
+                sh 'docker run --platform linux/amd64 --rm -v "$WORKSPACE:/workspace" -v gradle-cache:/root/.gradle -w /workspace "$ANDROID_BUILD_IMAGE" ./gradlew --no-daemon :core:jvmTest :feature:home-feed:jvmTest :feature:catalog:jvmTest :feature:favorites:jvmTest :feature:profile:jvmTest :feature:camera:jvmTest :shared:jvmTest'
+            }
+            post {
+                always {
+                    junit testResults: '**/build/test-results/**/*.xml', allowEmptyResults: true
+                }
             }
         }
 
         stage('Debug APK') {
             steps {
-                sh './gradlew --no-daemon :androidApp:assembleDebug'
+                sh 'docker run --platform linux/amd64 --rm -v "$WORKSPACE:/workspace" -v gradle-cache:/root/.gradle -w /workspace "$ANDROID_BUILD_IMAGE" ./gradlew --no-daemon :androidApp:assembleDebug'
             }
         }
 
@@ -43,7 +47,7 @@ pipeline {
                 }
             }
             steps {
-                sh './gradlew --no-daemon :androidApp:bundleRelease'
+                sh 'docker run --platform linux/amd64 --rm -v "$WORKSPACE:/workspace" -v gradle-cache:/root/.gradle -w /workspace "$ANDROID_BUILD_IMAGE" ./gradlew --no-daemon :androidApp:bundleRelease'
             }
         }
 
@@ -55,7 +59,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'gradle-profiler --benchmark --project-dir "$WORKSPACE" --gradle-user-home "$HOME/.gradle" --scenario-file ci/gradle-profiler.scenarios --output-dir build/gradle-profiler clean_android_debug'
+                sh 'docker run --platform linux/amd64 --rm -v "$WORKSPACE:/workspace" -v gradle-cache:/root/.gradle -w /workspace "$ANDROID_BUILD_IMAGE" gradle-profiler --benchmark --project-dir /workspace --gradle-user-home /root/.gradle --scenario-file ci/gradle-profiler.scenarios --output-dir build/gradle-profiler clean_android_debug'
             }
             post {
                 always {
@@ -66,9 +70,6 @@ pipeline {
     }
 
     post {
-        always {
-            junit testResults: '**/build/test-results/**/*.xml', allowEmptyResults: true
-        }
         success {
             archiveArtifacts artifacts: 'androidApp/build/outputs/apk/debug/*.apk, androidApp/build/outputs/bundle/release/*.aab', allowEmptyArchive: true, fingerprint: true
         }
