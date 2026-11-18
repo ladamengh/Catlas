@@ -22,7 +22,7 @@ class PlayPublisherPlugin : Plugin<Project> {
                     project.provider {
                         extension.serviceAccountFile
                             ?.takeIf(String::isNotBlank)
-                            ?: System.getenv("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON").orEmpty()
+                            ?: System.getenv("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH").orEmpty()
                     },
                 )
             }

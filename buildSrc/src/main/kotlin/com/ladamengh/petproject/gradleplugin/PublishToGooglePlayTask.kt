@@ -133,7 +133,7 @@ abstract class PublishToGooglePlayTask : DefaultTask() {
         val credentialsPath = serviceAccountFile.get()
         if (credentialsPath.isBlank()) {
             throw GradleException(
-                "Set GOOGLE_PLAY_SERVICE_ACCOUNT_JSON to the service account JSON file path, " +
+                "Set GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH to the service account JSON file path, " +
                     "or configure playPublisher.serviceAccountFile.",
             )
         }

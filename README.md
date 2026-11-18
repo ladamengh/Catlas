@@ -57,3 +57,20 @@ Catlas — кроссплатформенное приложение-катал�
 - `:feature:camera` — добавление публикации с фотографией.
 
 Фичи зависят от `:core`; `:core` не зависит от фич. Модуль `:shared` подключает их и содержит навигацию приложения. Общий Kotlin и Compose-код находится в `commonMain`, платформенные фабрики базы — в соответствующих source sets.
+
+## Публикация Android в Google Play
+
+Задача `:androidApp:publishToGooglePlay` собирает и загружает release AAB. Передайте путь к JSON-ключу, трек и долю rollout:
+
+```shell
+export GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH="$HOME/.secrets/catlas-play-service-account.json"
+./gradlew :androidApp:publishToGooglePlay \
+  -PplayTrack=internal \
+  -PplayRolloutFraction=1.0
+```
+
+`playTrack` задаёт трек (`internal`, `alpha`, `beta`, `production`), `playRolloutFraction` — долю от `0` до `1` (например, `0.2` — 20%; допустимый диапазон: `0 < fraction <= 1`). Путь к ключу можно также передать через `-PplayServiceAccountFile=/path/to/key.json`.
+
+Для подписи настройте release upload keystore в Android Studio и храните его данные вне репозитория; см. [инструкцию Android](https://developer.android.com/studio/publish/app-signing). Сервисному аккаунту включите Google Play Developer API и выдайте в Play Console право выпуска на нужный трек: **Release apps to testing tracks** для тестирования или **Release to production, exclude devices, and use Play App Signing** для production ([справка по правам](https://support.google.com/googleplay/android-developer/answer/9844686)).
+
+Перед каждой следующей публикацией увеличивайте `versionCode` в `androidApp/build.gradle.kts`; сейчас он равен `1`.
